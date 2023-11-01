@@ -1,11 +1,26 @@
 package controllers
 
 import (
-    "github.com/gofiber/fiber/v2"
     "quizmaster/app/models"
     "quizmaster/app/services"
+    "github.com/gofiber/fiber/v2"
+    "github.com/go-playground/validator/v10"
     "go.mongodb.org/mongo-driver/mongo"
 )
+
+type GetUserByEmailRequest struct {
+    Email string `json:"email" validate:"required,email"`
+}
+
+func GetUserByEmailHandler(client *mongo.Client, email string) (*models.User, error) {
+    // Use the services function to fetch the user by email
+    user, err := services.GetUserByEmail(client, email)
+    if err != nil {
+        return nil, err
+    }
+
+    return user, nil
+}
 
 // CreateUserHandler handles the creation of a new user.
 func CreateUserHandler(c *fiber.Ctx, client *mongo.Client) error {
@@ -33,4 +48,19 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client) error {
     }
 
     return c.JSON(user)
+}
+
+func ParseAndValidateGetUserByEmailRequest(c *fiber.Ctx) (*GetUserByEmailRequest, error) {
+    var request GetUserByEmailRequest
+    validate := validator.New()
+
+    if err := c.BodyParser(&request); err != nil {
+        return nil, err
+    }
+
+    if err := validate.Struct(request); err != nil {
+        return nil, err
+    }
+
+    return &request, nil
 }

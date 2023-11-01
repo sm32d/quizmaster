@@ -2,27 +2,38 @@ package database
 
 import (
 	"context"
-
+	"time"
+	"os"
+    "github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // InitMongoDB initializes and returns a MongoDB client.
 func InitMongoDB() (*mongo.Client, error) {
-	// MongoDB connection string
-	uri := "mongodb://localhost:27017"
+	// Load environment variables from .env
+    err := godotenv.Load()
+    if err != nil {
+        // Handle the error
+    }
 
-	// Set up client options
+	// MongoDB connection string from environment variable
+	uri := os.Getenv("MONGODB_URI")
+
 	clientOptions := options.Client().ApplyURI(uri)
 
-	// Connect to MongoDB
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	// Create a context with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel() // Ensure the context is canceled when the function returns
+
+	// Connect to MongoDB with the timeout context
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	// Check the connection
-	err = client.Ping(context.TODO(), nil)
+	// Check the connection with the same timeout context
+	err = client.Ping(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
