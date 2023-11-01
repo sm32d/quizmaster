@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"quizmaster/app/routes"
 	"quizmaster/database"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,6 +24,9 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
+
+	// Set user routes
+    routes.SetUserRoutes(app, client)
 
 	// Start the Fiber application
 	app.Listen(":3000")
