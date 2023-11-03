@@ -26,7 +26,9 @@ func main() {
 	})
 
 	// Set user routes
-    routes.SetUserRoutes(app, client)
+	routes.SetUserRoutes(app, client)
+
+	routes.SetQuizRoutes(app, client)
 
 	// Start the Fiber application
 	app.Listen(":3000")
