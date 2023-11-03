@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -56,6 +57,80 @@ func InsertQuiz(client *mongo.Client, quiz models.Quiz) error {
 
 	// Insert the quiz into the database
 	_, err := collection.InsertOne(ctx, quiz)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetQuizByID retrieves a quiz by ID from the database
+func GetQuizByID(client *mongo.Client, quizID string) (*models.Quiz, error) {
+	collection := client.Database("quizmaster").Collection("quizzes")
+
+	quizObjectID, err := primitive.ObjectIDFromHex(quizID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Define a filter to find the quiz by ID
+	filter := bson.M{"_id": quizObjectID}
+
+	var quiz models.Quiz
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = collection.FindOne(ctx, filter).Decode(&quiz)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil // No matching quiz found, return nil
+		}
+		return nil, err
+	}
+
+	return &quiz, nil
+}
+
+// UpdateQuiz updates a quiz by ID in the database
+func UpdateQuiz(client *mongo.Client, quizID string, updatedQuiz models.Quiz) error {
+	collection := client.Database("quizmaster").Collection("quizzes")
+
+	quizObjectID, err := primitive.ObjectIDFromHex(quizID)
+	if err != nil {
+		return err
+	}
+
+	// Define a filter to find the quiz by ID
+	filter := bson.M{"_id": quizObjectID}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err = collection.ReplaceOne(ctx, filter, updatedQuiz)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteQuiz deletes a quiz by ID from the database
+func DeleteQuiz(client *mongo.Client, quizID string) error {
+	collection := client.Database("quizmaster").Collection("quizzes")
+
+	quizObjectID, err := primitive.ObjectIDFromHex(quizID)
+	if err != nil {
+		return err
+	}
+
+	// Define a filter to find the quiz by ID
+	filter := bson.M{"_id": quizObjectID}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err = collection.DeleteOne(ctx, filter)
 	if err != nil {
 		return err
 	}

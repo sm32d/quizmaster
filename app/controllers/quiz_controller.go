@@ -48,3 +48,54 @@ func CreateQuizHandler(c *fiber.Ctx, client *mongo.Client) error {
 
 	return c.JSON(quiz)
 }
+
+// GetQuizHandler retrieves a quiz by ID
+func GetQuizById(c *fiber.Ctx, client *mongo.Client) error {
+	quizID := c.Params("id")
+
+	// Retrieve the quiz by ID from the database
+	quiz, err := services.GetQuizByID(client, quizID)
+	if err != nil {
+		return err
+	}
+
+	if quiz == nil {
+		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
+	}
+
+	return c.JSON(quiz)
+}
+
+// UpdateQuizHandler updates a quiz by ID
+func UpdateQuiz(c *fiber.Ctx, client *mongo.Client) error {
+	quizID := c.Params("id")
+
+	// Parse the request body into the updated quiz object
+	var updatedQuiz models.Quiz
+	if err := c.BodyParser(&updatedQuiz); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
+	}
+
+	updatedQuiz.UpdatedAt = time.Now()
+
+	// Update the quiz in the database
+	err := services.UpdateQuiz(client, quizID, updatedQuiz)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(updatedQuiz)
+}
+
+// DeleteQuizHandler deletes a quiz by ID
+func DeleteQuiz(c *fiber.Ctx, client *mongo.Client) error {
+	quizID := c.Params("id")
+
+    // Delete the quiz by ID from the database
+    err := services.DeleteQuiz(client, quizID)
+    if err != nil {
+        return err
+    }
+
+    return c.SendStatus(fiber.StatusNoContent)
+}
