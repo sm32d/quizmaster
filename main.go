@@ -7,6 +7,7 @@ import (
 	"quizmaster/database"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
@@ -20,10 +21,11 @@ func main() {
 	// Define Fiber application and routes
 	app := fiber.New()
 
-	// Define routes and handlers inside this function
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	// Enable CORS for localhost:3001 for local dev
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:3001",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 
 	// Set user routes
 	routes.SetUserRoutes(app, client)
