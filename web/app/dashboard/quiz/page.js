@@ -1,7 +1,17 @@
 async function fetchQuizzes() {
-  const response = await fetch("http://localhost:3000/api/quizzes");
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch("http://127.0.0.1:3000/api/quizzes", {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    return null;
+  }
 }
 
 const Quiz = async () => {
