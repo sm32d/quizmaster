@@ -1,34 +1,35 @@
 package routes
 
 import (
-    "quizmaster/app/controllers"
-    "github.com/gofiber/fiber/v2"
-    "go.mongodb.org/mongo-driver/mongo"
+	"quizmaster/app/controllers"
+
+	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func SetUserRoutes(app *fiber.App, client *mongo.Client) {
 
-    app.Post("/api/signup", func(c *fiber.Ctx) error {
-        return controllers.CreateUserHandler(c, client)
-    })
-    
-    app.Post("/api/user", func(c *fiber.Ctx) error {
-        // Parse and validate the request
-        request, err := controllers.ParseAndValidateGetUserByEmailRequest(c)
-        if err != nil {
-            return c.Status(fiber.StatusBadRequest).SendString("Bad request")
-        }
+	app.Post("/api/login", func(c *fiber.Ctx) error {
+		return controllers.CreateUserHandler(c, client)
+	})
 
-        // Call the controller function to fetch the user by email
-        user, err := controllers.GetUserByEmailHandler(client, request.Email)
-        if err != nil {
-            return c.Status(fiber.StatusInternalServerError).SendString("Server error")
-        }
+	app.Post("/api/user", func(c *fiber.Ctx) error {
+		// Parse and validate the request
+		request, err := controllers.ParseAndValidateGetUserByEmailRequest(c)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).SendString("Bad request")
+		}
 
-        if user == nil {
-            return c.Status(fiber.StatusNotFound).SendString("User not found")
-        }
+		// Call the controller function to fetch the user by email
+		user, err := controllers.GetUserByEmailHandler(client, request.Email)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).SendString("Server error")
+		}
 
-        return c.JSON(user)
-    })
+		if user == nil {
+			return c.Status(fiber.StatusNotFound).SendString("User not found")
+		}
+
+		return c.JSON(user)
+	})
 }
