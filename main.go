@@ -33,5 +33,5 @@ func main() {
 	routes.SetQuizRoutes(app, client)
 
 	// Start the Fiber application
-	app.Listen(":3000")
+	app.Listen(":3001")
 }
