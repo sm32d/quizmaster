@@ -1,7 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
+import { options } from "./api/auth/[...nextauth]/options";
+import { getServerSession } from "next-auth/next";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(options);
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
@@ -12,9 +14,15 @@ export default function Home() {
             excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
             a id nisi.
           </p>
-          <Link href="/login">
-            <button className="btn btn-neutral">Login</button>
-          </Link>
+          {session ? (
+            <Link href="/dashboard">
+              <button className="btn btn-neutral">Let's Go</button>
+            </Link>
+          ) : (
+            <Link href="/api/auth/signin">
+              <button className="btn btn-neutral">Login</button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

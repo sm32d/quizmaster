@@ -1,6 +1,7 @@
 async function fetchQuizzes() {
+  const backendUri = process.env.BACKEND_URI;
   try {
-    const response = await fetch("http://127.0.0.1:3000/api/quizzes", {
+    const response = await fetch(`${backendUri}/api/quizzes`, {
       cache: "no-store",
     });
     if (!response.ok) {
