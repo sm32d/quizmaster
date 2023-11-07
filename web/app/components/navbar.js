@@ -2,6 +2,7 @@ import { options } from "../api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
 import React from "react";
+import SignOut from "./signout";
 
 const navbar = async () => {
   const session = await getServerSession(options);
@@ -16,9 +17,9 @@ const navbar = async () => {
         <ul className="menu menu-horizontal px-1">
           <li>
             {session ? (
-              <Link href="/dashboard">dashboard</Link>
+              <SignOut />
             ) : (
-              <Link href="/api/auth/signin">Log in</Link>
+              <Link href="/login">Log in</Link>
             )}
           </li>
           <li>

@@ -1,23 +1,18 @@
-import LoginForm from "./loginForm";
+import SignInWithGithub from "../components/signinWithGithub";
 
-const Login = () => {
+const LoginPage = () => {
   return (
-    <div className="hero min-h-screen bg-base-200">
-      <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="text-center lg:text-left px-6">
-          <h1 className="text-5xl font-bold">Login now!</h1>
-          <p className="py-6">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
-          </p>
-        </div>
-        <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-          <LoginForm />
+    <div className="min-h-screen bg-base-200 hero">
+      <div className="card lg:card-side bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Log In</h2>
+          <div className="card-actions justify-center py-4">
+            <SignInWithGithub />
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default LoginPage;
