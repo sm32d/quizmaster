@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- node.js (> 18)
+- node.js (> 18.17.0)
 - golang (created with v1.21)
 - mongodb
 
