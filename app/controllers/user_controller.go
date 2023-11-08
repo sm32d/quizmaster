@@ -31,13 +31,18 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client) error {
 	}
 
 	// Check if a user with the same email already exists
-	existingUser, err := services.GetUserByEmail(client, user.Email)
+	existingUser, err := services.GetUserByProviderAccountId(client, user.ProviderAccountId)
 	if err != nil {
 		return err // Handle the error, such as a database error
 	}
 	if existingUser != nil {
-		// User with the same email already exists, return an error response
-		return c.JSON(existingUser)
+		// User with the same id already exists
+		err := services.UpdateUserByProviderAccountID(client, user)
+		if err != nil {
+			return err
+		}
+		user.ID = existingUser.ID
+		return c.JSON(user)
 	}
 
 	// Use the InsertUser function from the services package
@@ -45,7 +50,7 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client) error {
 	if err != nil {
 		return err
 	}
-    user.ID = dbId
+	user.ID = dbId
 	return c.JSON(user)
 }
 

@@ -13,6 +13,9 @@ export const options = {
       const jsonObject = {};
       jsonObject["username"] = props.profile.login;
       jsonObject["email"] = props.profile.email;
+      jsonObject["name"] = props.user.name;
+      jsonObject["provider"] = props.account.provider;
+      jsonObject["providerAccountId"] = props.account.providerAccountId;
       let isAllowedToSignIn;
       try {
         const response = await fetch(`${backendUri}/api/login`, {
