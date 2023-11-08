@@ -1,5 +1,3 @@
-// routes/quiz_routes.go
-
 package routes
 
 import (
@@ -11,9 +9,9 @@ import (
 
 func SetQuizRoutes(app *fiber.App, client *mongo.Client) {
 	// get all quizzes
-	app.Get("/api/quizzes/:userId", func(c *fiber.Ctx) error {
-		userId := c.Params("userId")
-		return controllers.GetQuizzes(c, client, userId)
+	app.Get("/api/quizzes/:emailId", func(c *fiber.Ctx) error {
+		emailId := c.Params("emailId")
+		return controllers.GetQuizzes(c, client, emailId)
 	})
 
 	// create a quiz
@@ -22,7 +20,7 @@ func SetQuizRoutes(app *fiber.App, client *mongo.Client) {
 	})
 
 	// Retrieve a quiz by ID
-	app.Get("/api/quiz/:id", func(c *fiber.Ctx) error {
+	app.Post("/api/quiz/:id", func(c *fiber.Ctx) error {
 		return controllers.GetQuizById(c, client)
 	})
 

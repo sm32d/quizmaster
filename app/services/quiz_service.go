@@ -68,7 +68,7 @@ func InsertQuiz(client *mongo.Client, quiz models.Quiz) error {
 }
 
 // GetQuizByID retrieves a quiz by ID from the database
-func GetQuizByID(client *mongo.Client, quizID string) (*models.Quiz, error) {
+func GetQuizByID(client *mongo.Client, quizID string, providerAccountId string) (*models.Quiz, error) {
 	collection := client.Database("quizmaster").Collection("quizzes")
 
 	quizObjectID, err := primitive.ObjectIDFromHex(quizID)
@@ -77,7 +77,7 @@ func GetQuizByID(client *mongo.Client, quizID string) (*models.Quiz, error) {
 	}
 
 	// Define a filter to find the quiz by ID
-	filter := bson.M{"_id": quizObjectID}
+	filter := bson.M{"_id": quizObjectID, "created_by": providerAccountId}
 
 	var quiz models.Quiz
 
