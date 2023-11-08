@@ -13,7 +13,7 @@ import (
 )
 
 // ListQuizzes retrieves a list of all quizzes from the database.
-func ListQuizzes(client *mongo.Client) ([]models.Quiz, error) {
+func ListQuizzes(client *mongo.Client, userId string) ([]models.Quiz, error) {
 	// Access the MongoDB collection containing quiz data
 	collection := client.Database("quizmaster").Collection("quizzes")
 
@@ -21,8 +21,11 @@ func ListQuizzes(client *mongo.Client) ([]models.Quiz, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // A 5-second timeout
 	defer cancel()                                                          // Cancel the context when the function returns
 
+	// Define a filter to match quizzes by user ID
+	filter := bson.M{"created_by": userId}
+
 	// Find all documents that match the filter
-	cursor, err := collection.Find(ctx, bson.M{}) // You can add filters if needed
+	cursor, err := collection.Find(ctx, filter) // You can add filters if needed
 	if err != nil {
 		return nil, err // Handle database connection issues or other errors
 	}

@@ -12,9 +12,9 @@ import (
 )
 
 // ListQuizzes retrieves a list of all quizzes.
-func GetQuizzes(c *fiber.Ctx, client *mongo.Client) error {
+func GetQuizzes(c *fiber.Ctx, client *mongo.Client, userId string) error {
 	// Use the service function to retrieve quizzes from the database
-	quizzes, err := services.ListQuizzes(client)
+	quizzes, err := services.ListQuizzes(client, userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Internal Server Error",
@@ -91,11 +91,11 @@ func UpdateQuiz(c *fiber.Ctx, client *mongo.Client) error {
 func DeleteQuiz(c *fiber.Ctx, client *mongo.Client) error {
 	quizID := c.Params("id")
 
-    // Delete the quiz by ID from the database
-    err := services.DeleteQuiz(client, quizID)
-    if err != nil {
-        return err
-    }
+	// Delete the quiz by ID from the database
+	err := services.DeleteQuiz(client, quizID)
+	if err != nil {
+		return err
+	}
 
-    return c.SendStatus(fiber.StatusNoContent)
+	return c.SendStatus(fiber.StatusNoContent)
 }

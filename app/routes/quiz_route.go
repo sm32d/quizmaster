@@ -11,8 +11,9 @@ import (
 
 func SetQuizRoutes(app *fiber.App, client *mongo.Client) {
 	// get all quizzes
-	app.Get("/api/quizzes", func(c *fiber.Ctx) error {
-		return controllers.GetQuizzes(c, client)
+	app.Get("/api/quizzes/:userId", func(c *fiber.Ctx) error {
+		userId := c.Params("userId")
+		return controllers.GetQuizzes(c, client, userId)
 	})
 
 	// create a quiz
