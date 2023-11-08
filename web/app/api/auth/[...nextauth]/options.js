@@ -1,4 +1,5 @@
 import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 
 export const options = {
   providers: [
@@ -6,16 +7,21 @@ export const options = {
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    }),
   ],
   callbacks: {
-    async signIn(props) {
+    async signIn({account, profile, user}) {
+
       const backendUri = process.env.BACKEND_URI;
       const jsonObject = {};
-      jsonObject["username"] = props.profile.login;
-      jsonObject["email"] = props.profile.email;
-      jsonObject["name"] = props.user.name;
-      jsonObject["provider"] = props.account.provider;
-      jsonObject["providerAccountId"] = props.account.providerAccountId;
+      jsonObject["username"] = profile.login;
+      jsonObject["email"] = profile.email;
+      jsonObject["name"] = user.name;
+      jsonObject["provider"] = account.provider;
+      jsonObject["providerAccountId"] = account.providerAccountId;
       let isAllowedToSignIn;
       try {
         const response = await fetch(`${backendUri}/api/login`, {
@@ -35,6 +41,6 @@ export const options = {
       } else {
         return false;
       }
-    }
+    },
   },
 };

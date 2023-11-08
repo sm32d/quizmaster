@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { options } from "./api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
-import SignInWithGithub from "./components/signinWithGithub";
+import SignInWithGithub from "./components/buttons/btnSigninWithGithub";
 
 export default async function Home() {
   const session = await getServerSession(options);
