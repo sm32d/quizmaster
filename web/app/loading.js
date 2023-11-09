@@ -1,4 +1,4 @@
-import LoadingCircular from "../components/LoadingCircular";
+import LoadingCircular from "./components/LoadingCircular";
 
 export default function Loading() {
   // You can add any UI inside Loading, including a Skeleton.
