@@ -20,6 +20,9 @@ const SignOut = () => {
           <p className="py-4">Are you sure that you want to sign out?</p>
           <div className="modal-action">
             <form method="dialog">
+            <button className="btn btn-neutral">Cancel</button>
+            </form>
+            <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
