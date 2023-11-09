@@ -23,7 +23,7 @@ func main() {
 
 	// Enable CORS for localhost:3001 for local dev
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3001",
+		AllowOrigins: "http://localhost:3000",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
