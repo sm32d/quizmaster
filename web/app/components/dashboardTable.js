@@ -1,7 +1,8 @@
-import { Share } from "tabler-icons-react";
+import { Dots, Share } from "tabler-icons-react";
 import { options } from "../api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
+import DeleteQuizInSummaryBtn from "./buttons/btnDeleteQuizInSummary";
 
 async function fetchQuizzes() {
   const backendUri = process.env.BACKEND_URI;
@@ -40,9 +41,7 @@ const DashboardTable = async () => {
           <th>
             <label>Difficulty</label>
           </th>
-          <th>
-            <label>Share</label>
-          </th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -55,23 +54,35 @@ const DashboardTable = async () => {
             </th>
             <td>
               <Link href={`/dashboard/quiz/${quiz.id}`}>
-              <div className="flex items-center space-x-3">
-                <div>
-                  <div className="font-bold">{quiz?.title}</div>
-                  <div className="text-sm opacity-50">
-                    {quiz?.questions?.length} Questions
+                <div className="flex items-center space-x-3">
+                  <div>
+                    <div className="font-bold">{quiz?.title}</div>
+                    <div className="text-sm opacity-50">
+                      {quiz?.questions?.length} Questions
+                    </div>
                   </div>
                 </div>
-              </div>
               </Link>
             </td>
             <td>
               <div className="text-sm opacity-60">{quiz?.difficulty}</div>
             </td>
             <td>
-              <button className="btn btn-square btn-outline">
-                <Share size={20} />
-              </button>
+              <details className="dropdown max-md:dropdown-bottom md:dropdown-right">
+                <summary className="m-1 btn btn-sm">
+                  <Dots />
+                </summary>
+                <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-25">
+                  <li>
+                    <button>
+                      <Share size={20} />
+                    </button>
+                  </li>
+                  <li>
+                    <DeleteQuizInSummaryBtn quizId={quiz?.id} backendUri={process.env.BACKEND_URI}/>
+                  </li>
+                </ul>
+              </details>
             </td>
           </tr>
         ))}
@@ -88,9 +99,7 @@ const DashboardTable = async () => {
           <th>
             <label>Difficulty</label>
           </th>
-          <th>
-            <label>Share</label>
-          </th>
+          <th></th>
         </tr>
       </tfoot>
     </table>
