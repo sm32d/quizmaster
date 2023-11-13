@@ -7,7 +7,7 @@ import SignOut from "./signout";
 const navbar = async () => {
   const session = await getServerSession(options);
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-base-100 border-b border-dashed border-neutral dark:border-base-content mb-4">
       <details className="dropdown">
         <summary tabIndex={0} className="btn btn-ghost btn-circle">
           <svg

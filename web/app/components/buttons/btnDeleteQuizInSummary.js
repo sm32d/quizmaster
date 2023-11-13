@@ -2,7 +2,6 @@
 import { TrashX } from "tabler-icons-react";
 
 async function deleteQuiz(quizId, backendUri) {
-  console.log(backendUri);
   try {
     const response = await fetch(`${backendUri}/api/quiz/${quizId}`, {
       method: "DELETE",
