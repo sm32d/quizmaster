@@ -53,14 +53,14 @@ const QuizDetails = async ({ params }) => {
               {quizDetails?.questions?.map((question) => (
                 <div
                   tabIndex={0}
-                  className="my-4 collapse collapse-arrow border border-base-300 bg-base-200"
+                  className="my-4 collapse collapse-arrow border border-base-300"
                 >
                   <div className="flex justify-between collapse-title text-base font-medium">
                     {question.text}
                     <span className="badge p-3">{question.difficulty}</span>
                   </div>
                   <div className="collapse-content px-10">
-                    <ul class="list-disc">
+                    <ul className="list-disc">
                       {question?.choices?.map((choice) => (
                         <li>{`${choice}`}</li>
                       ))}
