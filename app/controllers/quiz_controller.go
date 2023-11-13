@@ -40,6 +40,16 @@ func CreateQuizHandler(c *fiber.Ctx, client *mongo.Client) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
 
+	user, err := GetUserByEmailHandler(client, quiz.CreatedBy)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
+	}
+	if user == nil {
+		return c.Status(fiber.StatusNotFound).SendString("User not found")
+	}
+	
+	quiz.CreatedBy = user.ProviderAccountId
+
 	// Set the CreatedAt timestamp
 	quiz.CreatedAt = time.Now()
 	quiz.UpdatedAt = time.Now()
@@ -47,7 +57,7 @@ func CreateQuizHandler(c *fiber.Ctx, client *mongo.Client) error {
 	// Set the CreatedBy field with the user's information
 
 	// Insert the quiz into the database
-	err := services.InsertQuiz(client, quiz)
+	err = services.InsertQuiz(client, quiz)
 	if err != nil {
 		return err
 	}
