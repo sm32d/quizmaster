@@ -1,5 +1,6 @@
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 
 export const options = {
   providers: [
@@ -11,10 +12,16 @@ export const options = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
     }),
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET
+    }),
   ],
   callbacks: {
     async signIn({account, profile, user}) {
-
+      if (account.provider === "facebook" && (user.email === "" || user.email === null)) {
+        return false;
+      }
       const backendUri = process.env.BACKEND_URI;
       const jsonObject = {};
       jsonObject["username"] = profile.login;

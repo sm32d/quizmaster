@@ -1,15 +1,17 @@
+import SignInWithFacebook from "../components/buttons/btnSigninWithFacebook";
 import SignInWithGithub from "../components/buttons/btnSigninWithGithub";
 import SignInWithGoogle from "../components/buttons/btnSigninWithGoogle";
 
 const LoginPage = () => {
   return (
-    <div className="min-h-screen bg-base-200 hero">
+    <div className="min-h-screen hero">
       <div className="card lg:card-side bg-base-100 shadow-xl">
-        <div className="card-body">
+        <div className="card-body items-center text-center md:px-11">
           <h2 className="card-title">Log In</h2>
-          <div className="card-actions flex-col justify-center py-4">
+          <div className="card-actions flex-col pt-4 pb-2">
             <SignInWithGoogle />
             <SignInWithGithub />
+            <SignInWithFacebook />
           </div>
         </div>
       </div>

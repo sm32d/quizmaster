@@ -7,7 +7,7 @@ const SignInWithGithub = () => {
       onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
       className="btn btn-wide btn-neutral"
     >
-      <BrandGithub size={20} /> Sign In With Github
+      <BrandGithub size={20} /> With Github
     </button>
   );
 };

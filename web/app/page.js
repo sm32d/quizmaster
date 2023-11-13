@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { options } from "./api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
-import SignInWithGithub from "./components/buttons/btnSigninWithGithub";
 
 export default async function Home() {
   const session = await getServerSession(options);
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-screen">
       <div className="hero-content text-center">
         <div className="max-w-lg">
           <h1 className="text-5xl font-bold">Hello there</h1>
@@ -20,7 +19,11 @@ export default async function Home() {
               <button className="btn btn-neutral">Let's Go</button>
             </Link>
           ) : (
-            <SignInWithGithub />
+            <Link href="/login">
+              <button className="btn btn-neutral">
+                Log In
+              </button>
+            </Link>
           )}
         </div>
       </div>
