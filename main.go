@@ -6,11 +6,22 @@ import (
 	"quizmaster/app/routes"
 	"quizmaster/database"
 
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		// Handle the error
+	}
+
+	// Allowed origins URIs from environment variable
+	uri := os.Getenv("ALLOWED_ORIGINS")
+
 	// Connect to MongoDB
 	client, err := database.InitMongoDB()
 	if err != nil {
@@ -23,7 +34,7 @@ func main() {
 
 	// Enable CORS for localhost:3001 for local dev
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000",
+		AllowOrigins: uri,
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
