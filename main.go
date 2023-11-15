@@ -5,12 +5,12 @@ import (
 	"log"
 	"quizmaster/app/routes"
 	"quizmaster/database"
-	"strings"
+	"quizmaster/middleware"
 
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/joho/godotenv"
 )
 
@@ -30,37 +30,14 @@ func main() {
 
 	app := fiber.New()
 
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: uri,
-		AllowHeaders: "Origin, Content-Type, Accept",
-		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
+	// middleware setup
+	app.Use(middleware.SetupCORS(uri))
+	app.Use(keyauth.New(keyauth.Config{
+		Validator: middleware.ValidateAPIKey,
 	}))
 
-	app.Use(func(c *fiber.Ctx) error {
-		allowedOrigins := uri
-		origin := c.BaseURL()
-
-		// Trim spaces and split the allowed origins
-		allowedOriginList := strings.Split(strings.TrimSpace(allowedOrigins), ",")
-
-		// Check if the trimmed origin is in the list of allowed origins
-		originAllowed := false
-		for _, allowedOrigin := range allowedOriginList {
-			if origin == strings.TrimSpace(allowedOrigin) {
-				originAllowed = true
-				break
-			}
-		}
-
-		if !originAllowed {
-			return c.Status(fiber.StatusForbidden).SendString("Access denied: Invalid origin")
-		}
-
-		return c.Next()
-	})
-
+	// routes setup
 	routes.SetUserRoutes(app, client)
-
 	routes.SetQuizRoutes(app, client)
 
 	app.Listen(":3001")
