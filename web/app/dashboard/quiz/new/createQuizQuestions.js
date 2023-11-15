@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Minus, Plus } from "tabler-icons-react";
 import LoadingCircular from "../../../components/LoadingCircular";
 
-const CreateQuizQuestions = ({ backendUri, email }) => {
+const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
 
   const router = useRouter()
 
@@ -36,6 +36,7 @@ const CreateQuizQuestions = ({ backendUri, email }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${backendApiKey}`
         },
         body: JSON.stringify(req),
       });

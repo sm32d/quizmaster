@@ -23,6 +23,7 @@ export const options = {
         return false;
       }
       const backendUri = process.env.BACKEND_URI;
+      const backendApiKey = process.env.BACKEND_API_KEY;
       const jsonObject = {};
       jsonObject["username"] = profile.login;
       jsonObject["email"] = profile.email;
@@ -35,6 +36,7 @@ export const options = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${backendApiKey}`
           },
           body: JSON.stringify(jsonObject),
         });

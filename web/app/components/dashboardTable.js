@@ -6,12 +6,16 @@ import DeleteQuizInSummaryBtn from "./buttons/btnDeleteQuizInSummary";
 
 async function fetchQuizzes() {
   const backendUri = process.env.BACKEND_URI;
+  const backendApiKey = process.env.BACKEND_API_KEY;
   const session = await getServerSession(options);
   try {
     const response = await fetch(
       `${backendUri}/api/quizzes/${session.user.email}`,
       {
         cache: "no-store",
+        headers: {
+          "Authorization": `Bearer ${backendApiKey}`
+        }
       }
     );
     if (!response.ok) {
@@ -49,7 +53,7 @@ const DashboardTable = async () => {
           <tr key={quiz.id}>
             <th>
               <label>
-                <input type="checkbox" className="toggle" checked />
+                <input type="checkbox" className="toggle" />
               </label>
             </th>
             <td>
@@ -79,7 +83,7 @@ const DashboardTable = async () => {
                     </button>
                   </li>
                   <li>
-                    <DeleteQuizInSummaryBtn quizId={quiz?.id} backendUri={process.env.BACKEND_URI}/>
+                    <DeleteQuizInSummaryBtn quizId={quiz?.id} backendUri={process.env.BACKEND_URI} backendApiKey={process.env.BACKEND_API_KEY}/>
                   </li>
                 </ul>
               </details>

@@ -5,6 +5,7 @@ import { options } from "../../../api/auth/[...nextauth]/options";
 
 async function fetchQuizDetails(id) {
   const backendUri = process.env.BACKEND_URI;
+  const backendApiKey = process.env.BACKEND_API_KEY;
   const session = await getServerSession(options);
   const emailObject = {};
   emailObject["email"] = session.user.email;
@@ -13,6 +14,7 @@ async function fetchQuizDetails(id) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${backendApiKey}`
       },
       body: JSON.stringify(emailObject),
       cache: "no-store",

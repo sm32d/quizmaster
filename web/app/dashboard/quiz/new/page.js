@@ -6,6 +6,7 @@ import { options } from "../../../api/auth/[...nextauth]/options";
 
 const NewQuiz = async () => {
   const backendUri = process.env.BACKEND_URI;
+  const backendApiKey = process.env.BACKEND_API_KEY;
   const session = await getServerSession(options);
   const userEmail = session?.user?.email;
   return (
@@ -24,7 +25,7 @@ const NewQuiz = async () => {
       </header>
       <main className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
         <div className="overflow-x-auto p-6 flex justify-center">
-          <CreateQuizQuestions backendUri={backendUri} email={userEmail} />
+          <CreateQuizQuestions backendUri={backendUri} email={userEmail} backendApiKey={backendApiKey} />
         </div>
       </main>
     </div>
