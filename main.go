@@ -5,6 +5,7 @@ import (
 	"log"
 	"quizmaster/app/routes"
 	"quizmaster/database"
+	"strings"
 
 	"os"
 
@@ -19,30 +20,48 @@ func main() {
 		// Handle the error
 	}
 
-	// Allowed origins URIs from environment variable
 	uri := os.Getenv("ALLOWED_ORIGINS")
 
-	// Connect to MongoDB
 	client, err := database.InitMongoDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer client.Disconnect(context.Background())
 
-	// Define Fiber application and routes
 	app := fiber.New()
 
-	// Enable CORS for localhost:3001 for local dev
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: uri,
 		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
 	}))
 
-	// Set user routes
+	app.Use(func(c *fiber.Ctx) error {
+		allowedOrigins := uri
+		origin := c.BaseURL()
+
+		// Trim spaces and split the allowed origins
+		allowedOriginList := strings.Split(strings.TrimSpace(allowedOrigins), ",")
+
+		// Check if the trimmed origin is in the list of allowed origins
+		originAllowed := false
+		for _, allowedOrigin := range allowedOriginList {
+			if origin == strings.TrimSpace(allowedOrigin) {
+				originAllowed = true
+				break
+			}
+		}
+
+		if !originAllowed {
+			return c.Status(fiber.StatusForbidden).SendString("Access denied: Invalid origin")
+		}
+
+		return c.Next()
+	})
+
 	routes.SetUserRoutes(app, client)
 
 	routes.SetQuizRoutes(app, client)
 
-	// Start the Fiber application
 	app.Listen(":3001")
 }
