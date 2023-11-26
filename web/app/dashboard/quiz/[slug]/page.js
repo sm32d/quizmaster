@@ -2,6 +2,7 @@ import { ArrowBackUp, MoodSadDizzy } from "tabler-icons-react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { options } from "../../../api/auth/[...nextauth]/options";
+import NotFound from "../../../not-found";
 
 async function fetchQuizDetails(id) {
   const backendUri = process.env.BACKEND_URI;
@@ -74,21 +75,7 @@ const QuizDetails = async ({ params }) => {
           </main>
         </div>
       ) : (
-        <div className="hero min-h-screen">
-          <div className="hero-content flex-col">
-            <div className="flex">
-              <div className="flex items-center px-1"><MoodSadDizzy size={30} /></div>
-              <h1 className="text-2xl font-bold px-1">Uh oh!</h1>
-            </div>
-            <span className="max-w-md text-center">
-              This link seems broken or you do not have permission to view the
-              requested content.
-            </span>
-            <Link href="/dashboard">
-              <button className="btn mt-4">Go Back</button>
-            </Link>
-          </div>
-        </div>
+        <NotFound />
       )}
     </div>
   );
