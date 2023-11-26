@@ -39,6 +39,7 @@ func main() {
 	// routes setup
 	routes.SetUserRoutes(app, client)
 	routes.SetQuizRoutes(app, client)
+	routes.SetAnswerRoutes(app, client)
 
 	app.Listen(":3001")
 }
