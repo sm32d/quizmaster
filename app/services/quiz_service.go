@@ -67,8 +67,23 @@ func InsertQuiz(client *mongo.Client, quiz models.Quiz) error {
 	return nil
 }
 
-// GetQuizByID retrieves a quiz by ID from the database
+// GetQuizByID retrieves a quiz by ID from the database for the quiz owner
 func GetQuizByID(client *mongo.Client, quizID string, providerAccountId string) (*models.Quiz, error) {
+
+	quiz, err := GetQuizByIdForEU(client, quizID)
+	if err != nil {
+		return nil, err
+	}
+
+	if quiz.CreatedBy != providerAccountId {
+		return nil, nil
+	}
+
+	return quiz, err
+}
+
+// GetQuizByID retrieves a quiz by ID from the database for end user to take the quiz
+func GetQuizByIdForEU(client *mongo.Client, quizID string) (*models.Quiz, error) {
 	collection := client.Database("quizmaster").Collection("quizzes")
 
 	quizObjectID, err := primitive.ObjectIDFromHex(quizID)
@@ -77,7 +92,7 @@ func GetQuizByID(client *mongo.Client, quizID string, providerAccountId string) 
 	}
 
 	// Define a filter to find the quiz by ID
-	filter := bson.M{"_id": quizObjectID, "created_by": providerAccountId}
+	filter := bson.M{"_id": quizObjectID}
 
 	var quiz models.Quiz
 

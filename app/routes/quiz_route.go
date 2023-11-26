@@ -10,8 +10,7 @@ import (
 func SetQuizRoutes(app *fiber.App, client *mongo.Client) {
 	// get all quizzes
 	app.Get("/api/quizzes/:emailId", func(c *fiber.Ctx) error {
-		emailId := c.Params("emailId")
-		return controllers.GetQuizzes(c, client, emailId)
+		return controllers.GetQuizzes(c, client)
 	})
 
 	// create a quiz
@@ -22,6 +21,11 @@ func SetQuizRoutes(app *fiber.App, client *mongo.Client) {
 	// Retrieve a quiz by ID
 	app.Post("/api/quiz/:id", func(c *fiber.Ctx) error {
 		return controllers.GetQuizById(c, client)
+	})
+
+	// Retrieve a quiz by ID
+	app.Get("/api/quiz/:id", func(c *fiber.Ctx) error {
+		return controllers.GetQuizByIdForEU(c, client)
 	})
 
 	// Update a quiz by ID

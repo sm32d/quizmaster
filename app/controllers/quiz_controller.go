@@ -6,11 +6,13 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // ListQuizzes retrieves a list of all quizzes.
-func GetQuizzes(c *fiber.Ctx, client *mongo.Client, emailId string) error {
+func GetQuizzes(c *fiber.Ctx, client *mongo.Client) error {
+	emailId := c.Params("emailId")
 	user, err := GetUserByEmailHandler(client, emailId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
@@ -47,14 +49,18 @@ func CreateQuizHandler(c *fiber.Ctx, client *mongo.Client) error {
 	if user == nil {
 		return c.Status(fiber.StatusNotFound).SendString("User not found")
 	}
-	
+
+	quiz.ID = primitive.NewObjectID()
 	quiz.CreatedBy = user.ProviderAccountId
 
 	// Set the CreatedAt timestamp
 	quiz.CreatedAt = time.Now()
 	quiz.UpdatedAt = time.Now()
 
-	// Set the CreatedBy field with the user's information
+	// Assign a new ID to each question
+	for i := range quiz.Questions {
+		quiz.Questions[i].ID = primitive.NewObjectID()
+	}
 
 	// Insert the quiz into the database
 	err = services.InsertQuiz(client, quiz)
@@ -85,6 +91,23 @@ func GetQuizById(c *fiber.Ctx, client *mongo.Client) error {
 
 	// Retrieve the quiz by ID from the database
 	quiz, err := services.GetQuizByID(client, quizID, userId)
+	if err != nil {
+		return err
+	}
+
+	if quiz == nil {
+		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
+	}
+
+	return c.JSON(quiz)
+}
+
+// GetQuizHandler retrieves a quiz by ID
+func GetQuizByIdForEU(c *fiber.Ctx, client *mongo.Client) error {
+	quizID := c.Params("id")
+
+	// Retrieve the quiz by ID from the database
+	quiz, err := services.GetQuizByIdForEU(client, quizID)
 	if err != nil {
 		return err
 	}
