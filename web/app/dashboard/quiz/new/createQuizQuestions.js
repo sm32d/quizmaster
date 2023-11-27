@@ -34,6 +34,7 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
     try {
       const response = await fetch(`${backendUri}/api/quiz`, {
         method: "POST",
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${backendApiKey}`
