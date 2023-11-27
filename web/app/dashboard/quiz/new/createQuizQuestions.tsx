@@ -4,19 +4,49 @@ import { useState } from "react";
 import { Minus, Plus } from "tabler-icons-react";
 import LoadingCircular from "../../../components/LoadingCircular";
 
+type Question = {
+  id?: Number;
+  text: string;
+  choices: string[];
+  correct: string;
+  difficulty: string;
+  section: string;
+};
+
+type Quiz = {
+  id?: string;
+  title: string;
+  sections: string[];
+  difficulty: string;
+  questions: Question[];
+  collect_email: boolean;
+  allow_multiple_attempts: boolean;
+  created_at?: string;
+  updated_at?: string;
+  created_by: string;
+};
+
 const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
 
   const router = useRouter()
 
   const [nextId, setNextId] = useState(1);
-  const [inputFields, setInputFields] = useState([
-    { id: 0, text: "", choices: ["", ""], correct: "" },
+  const [inputFields, setInputFields] = useState<Question[]>([
+    { id: 0, text: "", choices: ["", ""], correct: "", difficulty: "", section: "" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateQuiz = async (formData) => {
     setIsLoading(true);
-    const quiz = {};
+    const quiz: Quiz = {
+      title: "",
+      sections: [],
+      difficulty: "",
+      questions: [],
+      collect_email: false,
+      allow_multiple_attempts: false,
+      created_by: "",
+    };
     quiz.title = formData.get("title");
     quiz.difficulty = formData.get("difficulty");
     quiz.questions = inputFields.map(({ id, ...rest }) => rest);
@@ -56,7 +86,7 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
   const handleAddFields = () => {
     setInputFields([
       ...inputFields,
-      { id: nextId, text: "", choices: ["", ""], correct: "" },
+      { id: nextId, text: "", choices: ["", ""], correct: "", difficulty: "", section: "" },
     ]);
     setNextId(nextId + 1);
   };
@@ -164,7 +194,7 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
       <div>
         <label className="py-2 px-1 font-bold text-xl">Questions</label>
         {inputFields.map((inputField) => (
-          <div className="form-control pt-4" key={inputField.id}>
+          <div className="form-control pt-4" key={Number(inputField.id)}>
             <label className="pb-2 px-1 font-medium">{`Question Title`}</label>
             <div className="flex items-center">
               <input

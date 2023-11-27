@@ -30,7 +30,7 @@ export const options = {
       jsonObject["name"] = user.name;
       jsonObject["provider"] = account.provider;
       jsonObject["providerAccountId"] = account.providerAccountId;
-      let isAllowedToSignIn;
+      let isAllowedToSignIn : boolean = false;
       try {
         const response = await fetch(`${backendUri}/api/login`, {
           method: "POST",

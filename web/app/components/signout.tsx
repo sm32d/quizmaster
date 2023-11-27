@@ -7,7 +7,7 @@ const SignOut = () => {
       {/* Open the modal using document.getElementById('ID').showModal() method */}
       <Link
         href=""
-        onClick={() => document.getElementById("sign_out_modal").showModal()}
+        onClick={() => { (document.getElementById("sign_out_modal") as HTMLDialogElement).showModal() }}
       >
         Sign Out
       </Link>

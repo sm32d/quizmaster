@@ -2,6 +2,30 @@ import { ArrowBackUp } from "tabler-icons-react";
 import Link from "next/link";
 import NotFound from "../../not-found";
 
+type Question = {
+  id?: string;
+  text: string;
+  choices: string[];
+  correct: string;
+  difficulty: string;
+  section: string;
+};
+
+type QuizAnswer = {
+  quiz_id: string;
+  user_id: string;
+  answers: QuestionAnswer[];
+}
+
+type QuestionAnswer = {
+  question_id: string;
+  answer: string;
+}
+
+type FormDataObject = {
+  email: string;
+}
+
 const DoQuiz = async ({ params }) => {
   const fetchQuizDetails = async (id) => {
     const backendUri = process.env.BACKEND_URI;
@@ -26,19 +50,19 @@ const DoQuiz = async ({ params }) => {
 
   const quizDetails = await fetchQuizDetails(params.slug);
 
-  const submitAnswer = async (formData) => {
+  const submitAnswer = async (formData: FormData) => {
     "use server";
-    const formDataObject = {};
+    const formDataObject: FormDataObject = {email: ''};
     formData.forEach((value, key) => {
       formDataObject[key] = value;
     });
-    const req = {};
+    const req: QuizAnswer = {quiz_id: '', user_id: '', answers: []};
     req.quiz_id = quizDetails?.id;
     if (quizDetails?.collect_email) req.user_id = formDataObject?.email
     req.answers = []
     const quizQuestions = quizDetails?.questions
-    quizQuestions?.forEach((question) => {
-      const questionAnswer = {}
+    quizQuestions?.forEach((question: Question) => {
+      const questionAnswer: QuestionAnswer = {question_id: '', answer: ''}
       const questionId = question?.id;
       questionAnswer.question_id = questionId;
       questionAnswer.answer = formDataObject[questionId];

@@ -28,8 +28,9 @@ const DeleteQuizInSummaryBtn = ({ quizId, backendUri, backendApiKey }) => {
   return (
     <div>
       <button
-        onClick={() =>
-          document.getElementById(`delete_quiz_${quizId}_modal`).showModal()
+        onClick={() => {
+          (document.getElementById(`delete_quiz_${quizId}_modal`) as HTMLDialogElement).showModal();
+        }
         }
       >
         <TrashX size={20} />
