@@ -23,11 +23,6 @@ func SetAnswerRoutes(app *fiber.App, client *mongo.Client) {
 		return controllers.GetAnswerForQuizByUser(c, client)
 	})
 
-	// Retrieve all answers for a user
-	app.Get("/api/quiz/answers/user/:userId", func(c *fiber.Ctx) error {
-		return controllers.GetAnswersByUser(c, client)
-	})
-
 	// Retrieve all answers for a question
 	app.Get("/api/quiz/:quizId/question/:questionId/answers", func(c *fiber.Ctx) error {
 		return controllers.GetAnswersByQuestion(c, client)

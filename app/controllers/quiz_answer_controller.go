@@ -13,7 +13,6 @@ import (
 func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client) error {
 	var answer models.Answer
 
-	// Parse the request body into the answer object
 	if err := c.BodyParser(&answer); err != nil {
 		log.Error("CreateAnswerHandler : Error parsing answer body : ", err)
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
@@ -48,7 +47,6 @@ func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client) error {
 	// Assign a new ID to each question
 	answer.ID = primitive.NewObjectID()
 
-	// Use the service function to create the answer in the database
 	_, err = services.CreateAnswer(client, answer)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -65,7 +63,6 @@ func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client) error {
 func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client) error {
 	quizId := c.Params("quizId")
 
-	// Use the service function to retrieve the answers from the database
 	answers, err := services.GetAnswersByQuiz(client, quizId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -83,7 +80,6 @@ func GetAnswerForQuizByUser(c *fiber.Ctx, client *mongo.Client) error {
 	quizId := c.Params("quizId")
 	userId := c.Params("userId")
 
-	// Use the service function to retrieve the answer from the database
 	answer, err := services.GetAnswerForQuizByUser(client, quizId, userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -102,29 +98,11 @@ func GetAnswerForQuizByUser(c *fiber.Ctx, client *mongo.Client) error {
 	})
 }
 
-// GetAnswersByUser retrieves all answers for a user.
-func GetAnswersByUser(c *fiber.Ctx, client *mongo.Client) error {
-	userId := c.Params("userId")
-
-	// Use the service function to retrieve the answers from the database
-	answers, err := services.GetAnswersByUser(client, userId)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Internal Server Error",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"answers": answers,
-	})
-}
-
 // GetAnswersByQuestion retrieves all answers for a question.
 func GetAnswersByQuestion(c *fiber.Ctx, client *mongo.Client) error {
 	quizId := c.Params("quizId")
 	questionId := c.Params("questionId")
 
-	// Use the service function to retrieve the answers from the database
 	answers, err := services.GetAnswersByQuestion(client, quizId, questionId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

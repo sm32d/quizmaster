@@ -14,7 +14,6 @@ type GetUserByEmailRequest struct {
 }
 
 func GetUserByEmailHandler(client *mongo.Client, email string) (*models.User, error) {
-	// Use the services function to fetch the user by email
 	user, err := services.GetUserByEmail(client, email)
 	if err != nil {
 		return nil, err
@@ -45,7 +44,6 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client) error {
 		return c.JSON(user)
 	}
 
-	// Use the InsertUser function from the services package
 	dbId, err := services.InsertUser(client, user)
 	if err != nil {
 		return err

@@ -21,7 +21,7 @@ func GetQuizzes(c *fiber.Ctx, client *mongo.Client) error {
 		return c.Status(fiber.StatusNotFound).SendString("User not found")
 	}
 	userId := user.ProviderAccountId
-	// Use the service function to retrieve quizzes from the database
+
 	quizzes, err := services.ListQuizzes(client, userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -37,7 +37,6 @@ func GetQuizzes(c *fiber.Ctx, client *mongo.Client) error {
 func CreateQuizHandler(c *fiber.Ctx, client *mongo.Client) error {
 	var quiz models.Quiz
 
-	// Parse the request body into the quiz object
 	if err := c.BodyParser(&quiz); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
@@ -53,7 +52,6 @@ func CreateQuizHandler(c *fiber.Ctx, client *mongo.Client) error {
 	quiz.ID = primitive.NewObjectID()
 	quiz.CreatedBy = user.ProviderAccountId
 
-	// Set the CreatedAt timestamp
 	quiz.CreatedAt = time.Now()
 	quiz.UpdatedAt = time.Now()
 
@@ -62,7 +60,6 @@ func CreateQuizHandler(c *fiber.Ctx, client *mongo.Client) error {
 		quiz.Questions[i].ID = primitive.NewObjectID()
 	}
 
-	// Insert the quiz into the database
 	err = services.InsertQuiz(client, quiz)
 	if err != nil {
 		return err
@@ -89,7 +86,6 @@ func GetQuizById(c *fiber.Ctx, client *mongo.Client) error {
 	}
 	userId := user.ProviderAccountId
 
-	// Retrieve the quiz by ID from the database
 	quiz, err := services.GetQuizByID(client, quizID, userId)
 	if err != nil {
 		return err
@@ -106,7 +102,6 @@ func GetQuizById(c *fiber.Ctx, client *mongo.Client) error {
 func GetQuizByIdForEU(c *fiber.Ctx, client *mongo.Client) error {
 	quizID := c.Params("id")
 
-	// Retrieve the quiz by ID from the database
 	quiz, err := services.GetQuizByIdForEU(client, quizID)
 	if err != nil {
 		return err
@@ -123,7 +118,6 @@ func GetQuizByIdForEU(c *fiber.Ctx, client *mongo.Client) error {
 func UpdateQuiz(c *fiber.Ctx, client *mongo.Client) error {
 	quizID := c.Params("id")
 
-	// Parse the request body into the updated quiz object
 	var updatedQuiz models.Quiz
 	if err := c.BodyParser(&updatedQuiz); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
@@ -131,7 +125,6 @@ func UpdateQuiz(c *fiber.Ctx, client *mongo.Client) error {
 
 	updatedQuiz.UpdatedAt = time.Now()
 
-	// Update the quiz in the database
 	err := services.UpdateQuiz(client, quizID, updatedQuiz)
 	if err != nil {
 		return err
@@ -144,7 +137,6 @@ func UpdateQuiz(c *fiber.Ctx, client *mongo.Client) error {
 func DeleteQuiz(c *fiber.Ctx, client *mongo.Client) error {
 	quizID := c.Params("id")
 
-	// Delete the quiz by ID from the database
 	err := services.DeleteQuiz(client, quizID)
 	if err != nil {
 		return err

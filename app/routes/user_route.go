@@ -14,13 +14,11 @@ func SetUserRoutes(app *fiber.App, client *mongo.Client) {
 	})
 
 	app.Post("/api/user", func(c *fiber.Ctx) error {
-		// Parse and validate the request
 		request, err := controllers.ParseAndValidateGetUserByEmailRequest(c)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 		}
 
-		// Call the controller function to fetch the user by email
 		user, err := controllers.GetUserByEmailHandler(client, request.Email)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).SendString("Server error")

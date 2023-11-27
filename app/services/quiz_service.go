@@ -12,26 +12,28 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// ListQuizzes retrieves a list of all quizzes from the database.
+/**
+* @brief Retrieve all quizzes from the MongoDB database for the user.
+*
+* @param client A pointer to the MongoDB client.
+* @param userId The ID of the user to retrieve quizzes for.
+*
+* @return A slice of pointers to the retrieved quizzes, or nil if no quizzes were found.
+ */
 func ListQuizzes(client *mongo.Client, userId string) ([]models.Quiz, error) {
-	// Access the MongoDB collection containing quiz data
 	collection := client.Database("quizmaster").Collection("quizzes")
 
-	// Create a context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // A 5-second timeout
 	defer cancel()                                                          // Cancel the context when the function returns
 
-	// Define a filter to match quizzes by user ID
 	filter := bson.M{"created_by": userId}
 
-	// Find all documents that match the filter
-	cursor, err := collection.Find(ctx, filter) // You can add filters if needed
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err // Handle database connection issues or other errors
 	}
 	defer cursor.Close(ctx)
 
-	// Define a slice to store the quizzes
 	var quizzes []models.Quiz
 
 	// Iterate through the cursor and decode documents into the slice
@@ -50,15 +52,20 @@ func ListQuizzes(client *mongo.Client, userId string) ([]models.Quiz, error) {
 	return quizzes, nil
 }
 
+/**
+* @brief Insert a quiz into the MongoDB database.
+*
+* @param client A pointer to the MongoDB client.
+* @param quiz The quiz to insert.
+*
+* @return An error if the operation failed, nil otherwise.
+ */
 func InsertQuiz(client *mongo.Client, quiz models.Quiz) error {
-	// Access the MongoDB collection for quizzes
 	collection := client.Database("quizmaster").Collection("quizzes")
 
-	// Create a context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Insert the quiz into the database
 	_, err := collection.InsertOne(ctx, quiz)
 	if err != nil {
 		return err
@@ -67,7 +74,15 @@ func InsertQuiz(client *mongo.Client, quiz models.Quiz) error {
 	return nil
 }
 
-// GetQuizByID retrieves a quiz by ID from the database for the quiz owner
+/**
+* @brief Retrieve a quiz by its ID for the quiz owner from the MongoDB database.
+*
+* @param client A pointer to the MongoDB client.
+* @param quizId The ID of the quiz to retrieve.
+* @param providerAccountId The ID of the user who created the quiz.
+*
+* @return A pointer to the retrieved quiz, or nil if no quiz was found.
+ */
 func GetQuizByID(client *mongo.Client, quizID string, providerAccountId string) (*models.Quiz, error) {
 
 	quiz, err := GetQuizByIdForEU(client, quizID)
@@ -82,7 +97,14 @@ func GetQuizByID(client *mongo.Client, quizID string, providerAccountId string) 
 	return quiz, err
 }
 
-// GetQuizByID retrieves a quiz by ID from the database for end user to take the quiz
+/**
+* @brief Retrieve a quiz by its ID from the MongoDB database without ownership check.
+*
+* @param client A pointer to the MongoDB client.
+* @param quizId The ID of the quiz to retrieve.
+*
+* @return A pointer to the retrieved quiz, or nil if no quiz was found.
+ */
 func GetQuizByIdForEU(client *mongo.Client, quizID string) (*models.Quiz, error) {
 	collection := client.Database("quizmaster").Collection("quizzes")
 
@@ -91,7 +113,6 @@ func GetQuizByIdForEU(client *mongo.Client, quizID string) (*models.Quiz, error)
 		return nil, err
 	}
 
-	// Define a filter to find the quiz by ID
 	filter := bson.M{"_id": quizObjectID}
 
 	var quiz models.Quiz
@@ -110,7 +131,15 @@ func GetQuizByIdForEU(client *mongo.Client, quizID string) (*models.Quiz, error)
 	return &quiz, nil
 }
 
-// UpdateQuiz updates a quiz by ID in the database
+/**
+* @brief Update a quiz by its ID in the MongoDB database.
+*
+* @param client A pointer to the MongoDB client.
+* @param quizId The ID of the quiz to update.
+* @param updatedQuiz The updated quiz.
+*
+* @return An error if the operation failed, nil otherwise.
+ */
 func UpdateQuiz(client *mongo.Client, quizID string, updatedQuiz models.Quiz) error {
 	collection := client.Database("quizmaster").Collection("quizzes")
 
@@ -119,7 +148,6 @@ func UpdateQuiz(client *mongo.Client, quizID string, updatedQuiz models.Quiz) er
 		return err
 	}
 
-	// Define a filter to find the quiz by ID
 	filter := bson.M{"_id": quizObjectID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -133,7 +161,15 @@ func UpdateQuiz(client *mongo.Client, quizID string, updatedQuiz models.Quiz) er
 	return nil
 }
 
-// DeleteQuiz deletes a quiz by ID from the database
+/**
+* @brief Delete a quiz by its ID from the MongoDB database.
+* @note This function will not delete the answers for the quiz.
+*
+* @param client A pointer to the MongoDB client.
+* @param quizId The ID of the quiz to delete.
+*
+* @return An error if the operation failed, nil otherwise.
+ */
 func DeleteQuiz(client *mongo.Client, quizID string) error {
 	collection := client.Database("quizmaster").Collection("quizzes")
 
@@ -142,7 +178,6 @@ func DeleteQuiz(client *mongo.Client, quizID string) error {
 		return err
 	}
 
-	// Define a filter to find the quiz by ID
 	filter := bson.M{"_id": quizObjectID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

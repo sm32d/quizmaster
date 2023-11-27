@@ -9,12 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// CreateAnswer inserts a new answer into the database.
+/**
+* @brief Insert an answer into the MongoDB database.
+*
+* @param client A pointer to the MongoDB client.
+* @param answer The answer to insert.
+*
+* @return A pointer to the result of the insert operation, or nil if an error occurred.
+ */
 func CreateAnswer(client *mongo.Client, answer models.Answer) (*mongo.InsertOneResult, error) {
-	// Access the MongoDB collection containing answer data
 	collection := client.Database("quizmaster").Collection("answers")
 
-	// Create a context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -27,26 +32,28 @@ func CreateAnswer(client *mongo.Client, answer models.Answer) (*mongo.InsertOneR
 	return result, nil
 }
 
-// GetAnswersByQuiz retrieves all answers for a quiz.
+/**
+* @brief Retrieve all answers from the MongoDB database for a quiz.
+*
+* @param client A pointer to the MongoDB client.
+* @param quizId The ID of the quiz to retrieve answers for.
+*
+* @return A slice of pointers to the retrieved answers, or nil if no answers were found.
+ */
 func GetAnswersByQuiz(client *mongo.Client, quizId string) ([]models.Answer, error) {
-	// Access the MongoDB collection containing answer data
 	collection := client.Database("quizmaster").Collection("answers")
 
-	// Create a context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Define a filter to match answers by quiz ID
 	filter := bson.M{"quiz_id": quizId}
 
-	// Find all documents that match the filter
-	cursor, err := collection.Find(ctx, filter) // You can add filters if needed
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err // Handle database connection issues or other errors
 	}
 	defer cursor.Close(ctx)
 
-	// Define a slice to store the answers
 	var answers []models.Answer
 
 	// Iterate through the cursor and decode documents into the slice
@@ -65,19 +72,23 @@ func GetAnswersByQuiz(client *mongo.Client, quizId string) ([]models.Answer, err
 	return answers, nil
 }
 
-// GetAnswerForQuizByUser retrieves the answer for a quiz by a user.
+/**
+* @brief Retrieve an answer from the MongoDB database for a quiz by a user.
+*
+* @param client A pointer to the MongoDB client.
+* @param quizId The ID of the quiz to retrieve answers for.
+* @param userId The ID of the user to retrieve answers for.
+*
+* @return A pointer to the retrieved answer, or nil if no answer was found.
+ */
 func GetAnswerForQuizByUser(client *mongo.Client, quizId string, userId string) (*models.Answer, error) {
-	// Access the MongoDB collection containing answer data
 	collection := client.Database("quizmaster").Collection("answers")
 
-	// Create a context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Define a filter to match answers by quiz ID and user ID
 	filter := bson.M{"quiz_id": quizId, "user_id": userId}
 
-	// Find the document that matches the filter
 	var answer models.Answer
 	err := collection.FindOne(ctx, filter).Decode(&answer)
 	if err != nil {
@@ -90,64 +101,29 @@ func GetAnswerForQuizByUser(client *mongo.Client, quizId string, userId string) 
 	return &answer, nil
 }
 
-// GetAnswersByUser retrieves all answers for a user.
-func GetAnswersByUser(client *mongo.Client, userId string) ([]models.Answer, error) {
-	// Access the MongoDB collection containing answer data
-	collection := client.Database("quizmaster").Collection("answers")
-
-	// Create a context for the database operation
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// Define a filter to match answers by user ID
-	filter := bson.M{"user_id": userId}
-
-	// Find all documents that match the filter
-	cursor, err := collection.Find(ctx, filter) // You can add filters if needed
-	if err != nil {
-		return nil, err // Handle database connection issues or other errors
-	}
-	defer cursor.Close(ctx)
-
-	// Define a slice to store the answers
-	var answers []models.Answer
-
-	// Iterate through the cursor and decode documents into the slice
-	for cursor.Next(ctx) {
-		var answer models.Answer
-		if err := cursor.Decode(&answer); err != nil {
-			return nil, err // Handle decoding errors
-		}
-		answers = append(answers, answer)
-	}
-
-	if err := cursor.Err(); err != nil {
-		return nil, err // Handle any cursor errors
-	}
-
-	return answers, nil
-}
-
-// GetAnswersByQuestion retrieves all answers for a question.
+/**
+* @brief Retrieve all answers for a specific question in a quiz from the MongoDB database.
+*
+* @param client A pointer to the MongoDB client.
+* @param quizId The ID of the quiz to retrieve answers for.
+* @param questionId The ID of the question to retrieve answers for.
+*
+* @return A slice of pointers to the retrieved answers, or nil if no answers were found.
+ */
 func GetAnswersByQuestion(client *mongo.Client, quizId string, questionId string) ([]models.QuestionAnswer, error) {
-	// Access the MongoDB collection containing answer data
 	collection := client.Database("quizmaster").Collection("answers")
 
-	// Create a context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Define a filter to match answers by user ID
 	filter := bson.M{"quiz_id": quizId, "answers.question_id": questionId}
 
-	// Find all documents that match the filter
-	cursor, err := collection.Find(ctx, filter) // You can add filters if needed
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err // Handle database connection issues or other errors
 	}
 	defer cursor.Close(ctx)
 
-	// Define a slice to store the question answers
 	var questionAnswers []models.QuestionAnswer
 
 	// Iterate through the cursor and decode documents into the slice
