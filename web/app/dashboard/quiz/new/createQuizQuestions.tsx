@@ -4,29 +4,11 @@ import { useState } from "react";
 import { Minus, Plus } from "tabler-icons-react";
 import LoadingCircular from "../../../components/LoadingCircular";
 
-type Question = {
-  id?: Number;
-  text: string;
-  choices: string[];
-  correct: string;
-  difficulty: string;
-  section: string;
-};
+import { Question as OriginalQuestion, Quiz } from "../../../types/quiz";
 
-type Quiz = {
-  id?: string;
-  title: string;
-  sections: string[];
-  difficulty: string;
-  questions: Question[];
-  collect_email: boolean;
-  allow_multiple_attempts: boolean;
-  created_at?: string;
-  updated_at?: string;
-  created_by: string;
-};
+type Question = Omit<OriginalQuestion, 'id'> & { id: Number };
 
-const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
+const CreateQuizQuestions = ({ backendUri, email, backendApiKey }: { backendUri: string, email: string, backendApiKey: string }) => {
 
   const router = useRouter()
 
@@ -36,7 +18,7 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateQuiz = async (formData) => {
+  const handleCreateQuiz = async (formData: FormData) => {
     setIsLoading(true);
     const quiz: Quiz = {
       title: "",
@@ -47,8 +29,8 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }) => {
       allow_multiple_attempts: false,
       created_by: "",
     };
-    quiz.title = formData.get("title");
-    quiz.difficulty = formData.get("difficulty");
+    quiz.title = formData.get("title") as string;
+    quiz.difficulty = formData.get("difficulty") as string;
     quiz.questions = inputFields.map(({ id, ...rest }) => rest);
     quiz.created_by = email;
 

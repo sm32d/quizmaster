@@ -3,11 +3,17 @@ import { options } from "../api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
 import DeleteQuizInSummaryBtn from "./buttons/btnDeleteQuizInSummary";
+import { Session } from "next-auth";
+import { Quiz } from "../types/quiz";
+
+type Quizzes = {
+  quizzes: Quiz[];
+}
 
 async function fetchQuizzes() {
   const backendUri = process.env.BACKEND_URI;
   const backendApiKey = process.env.BACKEND_API_KEY;
-  const session = await getServerSession(options);
+  const session: Session = await getServerSession(options);
   try {
     const response = await fetch(
       `${backendUri}/api/quizzes/${session.user.email}`,
@@ -21,7 +27,7 @@ async function fetchQuizzes() {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const data = await response.json();
+    const data: Quizzes = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching data: ", error);

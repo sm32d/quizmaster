@@ -2,32 +2,14 @@ import { ArrowBackUp } from "tabler-icons-react";
 import Link from "next/link";
 import NotFound from "../../not-found";
 
-type Question = {
-  id?: string;
-  text: string;
-  choices: string[];
-  correct: string;
-  difficulty: string;
-  section: string;
-};
-
-type QuizAnswer = {
-  quiz_id: string;
-  user_id: string;
-  answers: QuestionAnswer[];
-}
-
-type QuestionAnswer = {
-  question_id: string;
-  answer: string;
-}
+import { Question, QuestionAnswer, QuizAnswer } from "../../types/quiz";
 
 type FormDataObject = {
   email: string;
 }
 
 const DoQuiz = async ({ params }) => {
-  const fetchQuizDetails = async (id) => {
+  const fetchQuizDetails = async (id: string) => {
     const backendUri = process.env.BACKEND_URI;
     const backendApiKey = process.env.BACKEND_API_KEY;
     try {
@@ -104,7 +86,7 @@ const DoQuiz = async ({ params }) => {
                   </div>
                 ) : null}
                 <h2 className="text-2xl py-2">Questions</h2>
-                {quizDetails?.questions?.map((question, index) => (
+                {quizDetails?.questions?.map((question: Question, index) => (
                   <div key={index} className="flex flex-col">
                     <label className="py-2 px-1 font-bold text-lg">
                       {question?.text}
@@ -122,7 +104,6 @@ const DoQuiz = async ({ params }) => {
                             name={question?.id}
                             className="radio checked:bg-blue-500"
                             value={choice}
-                            required
                           />
                         </label>
                       ))

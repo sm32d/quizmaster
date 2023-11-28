@@ -1,7 +1,7 @@
 "use client";
 import { TrashX } from "tabler-icons-react";
 
-async function deleteQuiz(quizId, backendUri, backendApiKey) {
+async function deleteQuiz(quizId: string, backendUri: string, backendApiKey: string) {
   try {
     const response = await fetch(`${backendUri}/api/quiz/${quizId}`, {
       method: "DELETE",
@@ -19,7 +19,7 @@ async function deleteQuiz(quizId, backendUri, backendApiKey) {
   }
 }
 
-const DeleteQuizInSummaryBtn = ({ quizId, backendUri, backendApiKey }) => {
+const DeleteQuizInSummaryBtn = ({ quizId, backendUri, backendApiKey }: { quizId: string, backendUri: string, backendApiKey: string }) => {
   const handleDelete = async () => {
     const resp = await deleteQuiz(quizId, backendUri, backendApiKey);
     resp && window.location.reload();
