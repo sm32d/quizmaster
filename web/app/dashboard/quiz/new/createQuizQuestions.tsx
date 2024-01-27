@@ -26,7 +26,7 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }: { backendUri:
       difficulty: "",
       questions: [],
       collect_email: false,
-      allow_multiple_attempts: false,
+      allow_multiple_attempts: true,
       created_by: "",
     };
     quiz.title = formData.get("title") as string;
