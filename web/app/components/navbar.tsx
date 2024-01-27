@@ -4,6 +4,8 @@ import Link from "next/link";
 import React from "react";
 import SignOut from "./signout";
 
+import { Alpha } from "tabler-icons-react";
+
 const navbar = async () => {
   const session = await getServerSession(options);
   return (
@@ -30,8 +32,8 @@ const navbar = async () => {
           className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
         >
           <li>
-              <Link href="/">Home</Link>
-            </li>
+            <Link href="/">Home</Link>
+          </li>
           {session ? (
             <li>
               <Link href="/dashboard">Dashboard</Link>
@@ -45,7 +47,10 @@ const navbar = async () => {
       </details>
       <div className="flex-1">
         <Link href="/" className="btn btn-ghost normal-case text-xl">
-          QuizMaster
+          QuizMaster{" "}
+          <span className="text-xs flex -ml-2 -mb-5">
+            <Alpha size={10} /> alpha
+          </span>
         </Link>
       </div>
       <div className="flex-none px-4">
