@@ -8,6 +8,7 @@ import { Alpha } from "tabler-icons-react";
 
 const navbar = async () => {
   const session = await getServerSession(options);
+  const APP_NAME = process.env.APP_NAME;
   return (
     <div className="navbar bg-base-100 border-b border-dashed border-neutral dark:border-base-content mb-4">
       <details className="dropdown">
@@ -47,7 +48,7 @@ const navbar = async () => {
       </details>
       <div className="flex-1">
         <Link href="/" className="btn btn-ghost normal-case text-xl">
-          QuizMaster{" "}
+          {APP_NAME}{" "}
           <span className="text-xs flex -ml-2 -mb-5">
             <Alpha size={10} /> alpha
           </span>

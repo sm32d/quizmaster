@@ -6,8 +6,11 @@ import AuthProvider from "./context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// get APP_NAME from env
+const APP_NAME = process.env.APP_NAME;
+
 export const metadata = {
-  title: "QuizMaster",
+  title: APP_NAME,
   description: "",
 };
 
