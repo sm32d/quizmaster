@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"log"
 	"quizmaster/app/models"
 	"time"
 
@@ -83,7 +82,6 @@ func InsertUser(client *mongo.Client, user models.User) (primitive.ObjectID, err
 
 	insertedUser, err := collection.InsertOne(ctx, user)
 	if err != nil {
-		log.Println("Error inserting user:", err)
 		return primitive.NilObjectID, err
 	}
 
@@ -104,14 +102,13 @@ func UpdateUserByProviderAccountID(client *mongo.Client, updatedUser models.User
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // A 5-second timeout
 	defer cancel()
 
-	filter := bson.M{"providerAccountId": updatedUser.ProviderAccountId}
+	filter := bson.M{"provider": updatedUser.Provider, "providerAccountId": updatedUser.ProviderAccountId}
 
 	// Define the update operation. Use $set to update specific fields.
 	update := bson.M{"$set": updatedUser}
 
 	_, err := collection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		log.Println("Error updating user:", err)
 		return err
 	}
 
