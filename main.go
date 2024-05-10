@@ -35,6 +35,7 @@ func main() {
 	app.Use(keyauth.New(keyauth.Config{
 		Validator: middleware.ValidateAPIKey,
 	}))
+	app.Use(middleware.TrackingIDMiddleware)
 
 	// routes setup
 	routes.SetUserRoutes(app, client)
