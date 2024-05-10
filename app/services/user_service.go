@@ -47,10 +47,10 @@ func GetUserByEmail(client *mongo.Client, email string) (*models.User, error) {
 *
 * @return A pointer to the retrieved user, or nil if no user was found.
  */
-func GetUserByProviderAccountId(client *mongo.Client, providerAccountId string) (*models.User, error) {
+func GetUserByProviderAccountId(client *mongo.Client, provider string, providerAccountId string) (*models.User, error) {
 	collection := client.Database("quizmaster").Collection("users")
 
-	filter := bson.M{"providerAccountId": providerAccountId}
+	filter := bson.M{"provider": provider, "providerAccountId": providerAccountId}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // A 5-second timeout
 	defer cancel()                                                          // Cancel the context when the function returns
