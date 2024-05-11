@@ -167,18 +167,40 @@ func UpdateQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	quizID := c.Params("id")
 	log.Info("Received quiz update request for ID:", quizID, ", trackingID:", trackingID)
 
+	quiz, err := services.GetQuizByIdForEU(client, quizID)
+	if err != nil {
+		log.Error("Failed to retrieve quiz:", err, ", trackingID:", trackingID)
+		return err
+	}
+
+	if quiz == nil {
+		log.Error("Quiz not found:", quizID, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
+	}
+
 	var updatedQuiz models.Quiz
 	if err := c.BodyParser(&updatedQuiz); err != nil {
 		log.Error("Failed to parse quiz from request body:", err, ", trackingID:", trackingID)
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
 
-	err := services.UpdateQuiz(client, quizID, updatedQuiz)
+	// Update the quiz in the database
+	for i := range updatedQuiz.Questions { 
+		// Update the ID of each question
+		if i < len(quiz.Questions) {
+			updatedQuiz.Questions[i].ID = quiz.Questions[i].ID
+		} else {
+			updatedQuiz.Questions[i].ID = primitive.NewObjectID()
+		}
+	}
+
+	err = services.UpdateQuiz(client, quizID, updatedQuiz)
 	if err != nil {
 		log.Error("Failed to update quiz:", err, ", trackingID:", trackingID)
 		return err
 	}
 
+	updatedQuiz.CreatedBy = quiz.CreatedBy
 	updatedQuiz.UpdatedAt = time.Now()
 	log.Info("Updated quiz details successfully:", updatedQuiz, ", trackingID:", trackingID)
 
