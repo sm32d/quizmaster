@@ -5,10 +5,11 @@ import Link from "next/link";
 import DeleteQuizInSummaryBtn from "./buttons/btnDeleteQuizInSummary";
 import { Session } from "next-auth";
 import { Quiz } from "../types/quiz";
+import ShareQuiz from "./shareQuiz";
 
 type Quizzes = {
   quizzes: Quiz[];
-}
+};
 
 async function fetchQuizzes() {
   const backendUri = process.env.BACKEND_URI;
@@ -20,9 +21,9 @@ async function fetchQuizzes() {
       {
         cache: "no-store",
         headers: {
-          "Authorization": `Bearer ${backendApiKey}`
-        }
-      }
+          Authorization: `Bearer ${backendApiKey}`,
+        },
+      },
     );
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -85,11 +86,15 @@ const DashboardTable = async () => {
                 <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-25">
                   <li>
                     <button>
-                      <Share size={20} />
+                      <ShareQuiz quizId={quiz.id} />
                     </button>
                   </li>
                   <li>
-                    <DeleteQuizInSummaryBtn quizId={quiz?.id} backendUri={process.env.BACKEND_URI} backendApiKey={process.env.BACKEND_API_KEY}/>
+                    <DeleteQuizInSummaryBtn
+                      quizId={quiz?.id}
+                      backendUri={process.env.BACKEND_URI}
+                      backendApiKey={process.env.BACKEND_API_KEY}
+                    />
                   </li>
                 </ul>
               </details>
