@@ -10,7 +10,7 @@ const navbar = async () => {
   const session = await getServerSession(options);
   const APP_NAME = process.env.APP_NAME;
   return (
-    <div className="navbar bg-base-100 border-b border-dashed border-neutral dark:border-base-content mb-4">
+    <div className="navbar bg-base-100 border-b border-dashed border-neutral dark:border-base-content min-h-[8svh]">
       <details className="dropdown">
         <summary tabIndex={0} className="btn btn-ghost btn-circle">
           <svg

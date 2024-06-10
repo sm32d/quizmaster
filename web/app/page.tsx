@@ -6,12 +6,13 @@ export default async function Home() {
   const session = await getServerSession(options);
   const APP_NAME = process.env.APP_NAME;
   return (
-    <div className="hero min-h-screen">
+    <div className="hero min-h-[92svh]">
       <div className="hero-content text-center">
         <div className="max-w-lg">
           <h1 className="text-5xl font-bold">Welcome</h1>
           <p className="py-6">
-            {APP_NAME} is your one-stop solution for creating and sharing quizzes.
+            {APP_NAME} is your one-stop solution for creating and sharing
+            quizzes.
           </p>
           {session ? (
             <Link href="/dashboard">
@@ -19,9 +20,7 @@ export default async function Home() {
             </Link>
           ) : (
             <Link href="/login">
-              <button className="btn btn-neutral">
-                Log In
-              </button>
+              <button className="btn btn-neutral">Log In</button>
             </Link>
           )}
         </div>
