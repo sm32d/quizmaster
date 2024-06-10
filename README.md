@@ -41,13 +41,13 @@ To run the built go app, run
 
 ```sh
 cd web
-npm install
+yarn
 ```
 
 - Run the development server:
 
 ```sh
-npm run dev
+yarn dev
 ```
 
 ### Build
@@ -55,11 +55,11 @@ npm run dev
 To build the next app, run
 
 ```sh
-npm run build
+yarn build
 ```
 
 To start the built app, run
 
 ```sh
-npm start
+yarn start
 ```
