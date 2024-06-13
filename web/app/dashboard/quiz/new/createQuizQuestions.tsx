@@ -1,24 +1,81 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Minus, Plus } from "tabler-icons-react";
+import { Question as OriginalQuestion, Quiz } from "../../../types/quiz";
+import { useRouter } from "next/navigation";
 import LoadingCircular from "../../../components/LoadingCircular";
 
-import { Question as OriginalQuestion, Quiz } from "../../../types/quiz";
+const CreateQuizQuestions = ({
+  backendUri,
+  email,
+  backendApiKey,
+}: {
+  backendUri: string;
+  email: string;
+  backendApiKey: string;
+}) => {
+  const router = useRouter();
 
-type Question = Omit<OriginalQuestion, 'id'> & { id: Number };
-
-const CreateQuizQuestions = ({ backendUri, email, backendApiKey }: { backendUri: string, email: string, backendApiKey: string }) => {
-
-  const router = useRouter()
-
-  const [nextId, setNextId] = useState(1);
-  const [inputFields, setInputFields] = useState<Question[]>([
-    { id: 0, text: "", choices: ["", ""], correct: "", difficulty: "", section: "" },
-  ]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateQuiz = async (formData: FormData) => {
+  const [step, setStep] = useState(0);
+  const [title, setTitle] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [questions, setQuestions] = useState([
+    { text: "", choices: ["", ""], correct: "", difficulty: "", section: "" },
+  ]);
+
+  const nextStep = () => {
+    setStep(step + 1);
+  };
+
+  const previousStep = () => {
+    setStep(step - 1);
+  };
+
+  const addQuestion = () => {
+    setQuestions([
+      ...questions,
+      { text: "", choices: ["", ""], correct: "", difficulty: "", section: "" },
+    ]);
+  };
+
+  const updateQuestion = (index, value, optionIndex) => {
+    const newQuestions = [...questions];
+    if (optionIndex === undefined) {
+      newQuestions[index] = value;
+    } else {
+      newQuestions[index].choices[optionIndex] = value;
+    }
+    setQuestions(newQuestions);
+  };
+
+  const updateQuestionchoices = (questionIndex, choices) => {
+    const newQuestions = [...questions];
+    newQuestions[questionIndex].choices = choices;
+    setQuestions(newQuestions);
+  };
+
+  const updateCorrectAnswer = (questionIndex, answer) => {
+    const newQuestions = [...questions];
+    newQuestions[questionIndex].correct = answer;
+    setQuestions(newQuestions);
+  };
+
+  // function to check if all choices in a question are filled
+  const checkIfAllchoicesFilled = (questionIndex) => {
+    const choices = questions[questionIndex].choices;
+    return choices.every((option) => option !== "");
+  };
+
+  // function to check if all questions are filled
+  const checkIfAllQuestionsFilled = () => {
+    return questions.every(
+      (question) => question.text !== "" && question.correct !== ""
+    );
+  };
+
+  const handleCreateQuiz = async () => {
     setIsLoading(true);
     const quiz: Quiz = {
       title: "",
@@ -29,9 +86,9 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }: { backendUri:
       allow_multiple_attempts: true,
       created_by: "",
     };
-    quiz.title = formData.get("title") as string;
-    quiz.difficulty = formData.get("difficulty") as string;
-    quiz.questions = inputFields.map(({ id, ...rest }) => rest);
+    quiz.title = title as string;
+    quiz.difficulty = difficulty as string;
+    quiz.questions = questions;
     quiz.created_by = email;
 
     const req = {
@@ -49,7 +106,7 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }: { backendUri:
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${backendApiKey}`
+          Authorization: `Bearer ${backendApiKey}`,
         },
         body: JSON.stringify(req),
       });
@@ -57,7 +114,7 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }: { backendUri:
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      router.push('/dashboard')
+      router.push("/dashboard");
       return data;
     } catch (error) {
       console.error("Error fetching data: ", error);
@@ -65,198 +122,223 @@ const CreateQuizQuestions = ({ backendUri, email, backendApiKey }: { backendUri:
     }
   };
 
-  const handleAddFields = () => {
-    setInputFields([
-      ...inputFields,
-      { id: nextId, text: "", choices: ["", ""], correct: "", difficulty: "", section: "" },
-    ]);
-    setNextId(nextId + 1);
-  };
-
-  const handleRemoveFields = (id) => {
-    const values = inputFields.filter((field) => field.id !== id);
-    setInputFields(values);
-  };
-
-  const handleChangeQuestion = (id, event) => {
-    const newInputFields = inputFields.map((field) => {
-      if (id === field.id) {
-        field.text = event.target.value;
-      }
-      return field;
-    });
-    setInputFields(newInputFields);
-  };
-
-  const handleChangeOption = (questionId, optionIndex, event) => {
-    const newInputFields = inputFields.map((field) => {
-      if (questionId === field.id) {
-        field.choices[optionIndex] = event.target.value;
-      }
-      return field;
-    });
-    setInputFields(newInputFields);
-  };
-
-  const handleChangeCorrectOption = (questionId, event) => {
-    const newInputFields = inputFields.map((field) => {
-      if (questionId === field.id) {
-        field.correct = event.target.value;
-      }
-      return field;
-    });
-    setInputFields(newInputFields);
-  };
-
-  const handleAddOption = (questionId) => {
-    const newInputFields = inputFields.map((field) => {
-      if (questionId === field.id) {
-        field.choices.push("");
-      }
-      return field;
-    });
-    setInputFields(newInputFields);
-  };
-
-  const handleRemoveOption = (questionId, optionIndex) => {
-    const newInputFields = inputFields.map((field) => {
-      if (questionId === field.id) {
-        if (field.choices.length > 2) {
-          field.choices.splice(optionIndex, 1);
-        }
-      }
-      return field;
-    });
-    setInputFields(newInputFields);
-  };
-
   return (
-    <form className="flex flex-col w-full md:w-1/2" action={handleCreateQuiz}>
-      <div className="form-control py-2">
-        <label className="py-2 px-1 font-bold text-xl">Quiz Title</label>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          className="input input-bordered w-full"
-          required
-        />
-      </div>
-      <div className="form-control py-2">
-        <label className="py-2 px-1 font-bold text-xl">Difficulty</label>
-        <label className="label cursor-pointer">
-          <span className="label-text">Easy</span>
-          <input
-            type="radio"
-            name="difficulty"
-            className="radio checked:bg-blue-500"
-            value="easy"
-            required
-          />
-        </label>
-        <label className="label cursor-pointer">
-          <span className="label-text">Medium</span>
-          <input
-            type="radio"
-            name="difficulty"
-            className="radio checked:bg-blue-500"
-            value="medium"
-          />
-        </label>
-        <label className="label cursor-pointer">
-          <span className="label-text">Hard</span>
-          <input
-            type="radio"
-            name="difficulty"
-            className="radio checked:bg-blue-500"
-            value="hard"
-          />
-        </label>
-      </div>
-      <div>
-        <label className="py-2 px-1 font-bold text-xl">Questions</label>
-        {inputFields.map((inputField) => (
-          <div className="form-control pt-4" key={Number(inputField.id)}>
-            <label className="pb-2 px-1 font-medium">{`Question Title`}</label>
-            <div className="flex items-center">
+    <div className="min-w-[92svw] min-h-[82svh] text-gray-300">
+      {step === 0 && (
+        <div className="flex flex-col h-full px-4">
+          <div>
+            <div className="flex flex-col pt-4">
+              <label className="text-xl flex-grow">Title:</label>
               <input
                 type="text"
-                placeholder={`Please enter the question`}
-                className="input input-bordered w-full"
-                required
-                value={inputField.text}
-                onChange={(e) => handleChangeQuestion(inputField.id, e)}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="input input-bordered flex-grow mt-2"
               />
-              {inputFields.length > 1 && (
-                <button
-                  className="btn btn-square btn-sm ml-2"
-                  onClick={() => handleRemoveFields(inputField.id)}
-                >
-                  <Minus />
-                </button>
-              )}
             </div>
-            <div className="py-2">
-              <label className="font-medium">Options</label>
-              {inputField.choices.map((option, index) => (
-                <div key={index} className="flex items-center my-2">
-                  <input
-                    type="text"
-                    placeholder={`Option ${index + 1}`}
-                    className="input input-bordered input-sm w-full mr-2"
-                    required
-                    value={option}
-                    onChange={(e) =>
-                      handleChangeOption(inputField.id, index, e)
-                    }
-                  />
-                  {inputField.choices.length > 2 && (
+            <div className="flex flex-col pt-4">
+              <label className="text-xl flex-grow">Difficulty:</label>
+              <select
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className="select select-bordered flex-grow mt-2"
+              >
+                <option disabled selected value="">
+                  Select difficulty
+                </option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+          </div>
+          <div className="py-10 flex justify-end">
+            <button
+              className="btn btn-neutral btn-active"
+              onClick={nextStep}
+              disabled={!title || !difficulty}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+      {step === 1 && (
+        <div className="flex flex-col h-full px-4">
+          <div>
+            {questions.map((question, questionIndex) => (
+              <div key={questionIndex} className="card bg-neutral mt-4">
+                <div className="card-body">
+                  <div className="flex flex-col">
+                    <label className="text-xl flex-grow">{`Question ${
+                      questionIndex + 1
+                    }:`}</label>
+                    <input
+                      type="text"
+                      value={question.text || ""}
+                      onChange={(e) =>
+                        updateQuestion(
+                          questionIndex,
+                          {
+                            ...question,
+                            text: e.target.value,
+                          },
+                          undefined
+                        )
+                      }
+                      className="input input-bordered flex-grow mt-2"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <label className="text-base flex-grow">Choices:</label>
+                      {question.choices.map((option, questionOptionIndex) => (
+                        <div
+                          key={questionOptionIndex}
+                          className="flex items-center gap-2"
+                        >
+                          <input
+                            type="text"
+                            value={option || ""}
+                            onChange={(e) =>
+                              updateQuestion(
+                                questionIndex,
+                                e.target.value,
+                                questionOptionIndex
+                              )
+                            }
+                            className="input input-bordered flex-grow mt-2"
+                          />
+                          <button
+                            className="btn btn-square btn-sm"
+                            onClick={() => {
+                              question.choices.length > 2 &&
+                                question.choices.splice(questionOptionIndex, 1);
+                              updateQuestionchoices(
+                                questionIndex,
+                                question.choices
+                              );
+                            }}
+                          >
+                            <Minus />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                     <button
                       className="btn btn-square btn-sm"
-                      onClick={() => handleRemoveOption(inputField.id, index)}
-                    >
-                      <Minus />
-                    </button>
-                  )}
-                  {index === inputField.choices.length - 1 && (
-                    <button
-                      className="btn btn-square btn-sm ml-2"
-                      onClick={() => handleAddOption(inputField.id)}
+                      onClick={() => {
+                        updateQuestion(
+                          questionIndex,
+                          "",
+                          question.choices.length
+                        );
+                      }}
                     >
                       <Plus />
                     </button>
+                  </div>
+                  {checkIfAllchoicesFilled(questionIndex) && (
+                    <div className="flex flex-col">
+                      <label className="text-base flex-grow">
+                        Correct Option:
+                      </label>
+                      <select
+                        value={question.correct || ""}
+                        onChange={(e) =>
+                          updateCorrectAnswer(questionIndex, e.target.value)
+                        }
+                        className="select select-bordered flex-grow mt-2"
+                      >
+                        <option disabled selected value="">
+                          Select correct option
+                        </option>
+                        {question.choices.map((option, questionOptionIndex) => (
+                          <option key={questionOptionIndex} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   )}
                 </div>
-              ))}
-              <div className="flex flex-col py-2">
-                <label className="font-medium">Correct Option</label>
-                <select
-                  className="select select-bordered w-full my-2 select-sm"
-                  onChange={(e) => handleChangeCorrectOption(inputField.id, e)}
-                  value={inputField.correct}
-                >
-                  {inputField.choices.map((choice, index) => (
-                    <option key={index} value={choice}>
-                      {choice}
-                    </option>
-                  ))}
-                </select>
               </div>
+            ))}
+          </div>
+          <div>
+            <button
+              className="mt-5 btn btn-sm btn-neutral btn-outline"
+              onClick={addQuestion}
+            >
+              Add Question
+            </button>
+            <div className="py-10 flex justify-between items-center gap-2">
+              <button
+                className="btn btn-sm btn-neutral btn-outline"
+                onClick={previousStep}
+              >
+                Previous
+              </button>
+              <button
+                className="btn btn-neutral btn-active"
+                disabled={!checkIfAllQuestionsFilled()}
+                onClick={nextStep}
+              >
+                Next
+              </button>
             </div>
           </div>
-        ))}
-        <button className="btn btn-square btn-sm" onClick={handleAddFields}>
-          <Plus />
-        </button>
-      </div>
-      <button
-        type="submit"
-        className="btn btn-primary m-4"
-        disabled={isLoading}
-      >
-        {isLoading ? <LoadingCircular /> : "Create"}
-      </button>
-    </form>
+        </div>
+      )}
+      {step === 2 && (
+        <div className="flex flex-col h-full px-4">
+          <div className="text-xl px-4 py-2">Review your quiz</div>
+          <div className="px-4 py-2 text-lg">{title}</div>
+          <div className="px-4">
+            <span className="badge">{difficulty}</span>
+          </div>
+          {questions.map((question, index) => (
+            <div key={index} className="card bg-neutral mt-2 mx-4">
+              <div className="card-body px-4 py-2">
+                <div className="flex flex-col">
+                  <div className="text-lg">
+                    Question {index + 1}: {question.text}
+                  </div>
+                  <div className="divider m-0"></div>
+                  <div>
+                    {question.choices.map((option, questionOptionIndex) => (
+                      <div
+                        key={questionOptionIndex}
+                        className={`flex items-center gap-2 ${
+                          option === question.correct ? "text-success" : ""
+                        }`}
+                      >
+                        {questionOptionIndex + 1}. {option}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className="py-10 flex justify-between items-center gap-2">
+            <button
+              className="btn btn-sm btn-neutral btn-outline"
+              onClick={previousStep}
+            >
+              Previous
+            </button>
+            <button
+              className="btn btn-neutral btn-active"
+              disabled={isLoading}
+              onClick={handleCreateQuiz}
+            >
+              {isLoading ? <LoadingCircular /> : "Save"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
