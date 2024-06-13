@@ -1,4 +1,4 @@
-import { Dots, Share } from "tabler-icons-react";
+import { Dots } from "tabler-icons-react";
 import { options } from "../api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
