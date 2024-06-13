@@ -123,7 +123,7 @@ const CreateQuizQuestions = ({
   };
 
   return (
-    <div className="min-w-[92svw] min-h-[82svh] text-gray-300">
+    <div className="min-w-[92svw] min-h-[82svh]">
       {step === 0 && (
         <div className="flex flex-col h-full px-4">
           <div>
@@ -168,7 +168,7 @@ const CreateQuizQuestions = ({
           <div>
             {questions.map((question, questionIndex) => (
               <div key={questionIndex} className="card bg-neutral mt-4">
-                <div className="card-body">
+                <div className="card-body text-gray-300">
                   <div className="flex flex-col">
                     <label className="text-xl flex-grow">{`Question ${
                       questionIndex + 1
@@ -299,7 +299,7 @@ const CreateQuizQuestions = ({
           </div>
           {questions.map((question, index) => (
             <div key={index} className="card bg-neutral mt-2 mx-4">
-              <div className="card-body px-4 py-2">
+              <div className="card-body text-gray-300 px-4 py-2">
                 <div className="flex flex-col">
                   <div className="text-lg">
                     Question {index + 1}: {question.text}
