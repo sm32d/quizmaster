@@ -82,8 +82,8 @@ const CreateQuizQuestions = ({
       sections: [],
       difficulty: "",
       questions: [],
-      collect_email: false,
-      allow_multiple_attempts: true,
+      collect_email: true,
+      allow_multiple_attempts: false,
       created_by: "",
     };
     quiz.title = title as string;
