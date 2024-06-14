@@ -1,6 +1,10 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 // QuestionAnswer represents a user's answer to a specific question.
 type QuestionAnswer struct {
@@ -10,8 +14,9 @@ type QuestionAnswer struct {
 
 // Answer represents a user's answers to a quiz.
 type Answer struct {
-	ID      primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	QuizID  string             `json:"quiz_id" bson:"quiz_id"`
-	UserID  string             `json:"user_id" bson:"user_id"`
-	Answers []QuestionAnswer   `json:"answers" bson:"answers"`
+	ID        primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	QuizID    string             `json:"quiz_id" bson:"quiz_id"`
+	UserID    string             `json:"user_id" bson:"user_id"`
+	Answers   []QuestionAnswer   `json:"answers" bson:"answers"`
+	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
 }

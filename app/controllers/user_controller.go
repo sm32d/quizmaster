@@ -3,6 +3,7 @@ package controllers
 import (
 	"quizmaster/app/models"
 	"quizmaster/app/services"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -64,6 +65,7 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) er
 		// User with the same id already exists, update the user
 		log.Info("User already exists, updating:", user, ", trackingID:", trackingID)
 		user.ID = existingUser.ID
+		user.UpdatedAt = time.Now()
 		err := services.UpdateUserByProviderAccountID(client, user)
 		if err != nil {
 			log.Error("Failed to update user:", err, ", trackingID:", trackingID)
@@ -86,6 +88,7 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) er
 
 	// User does not exist, create a new user
 	log.Info("User does not exist, creating:", user.Email, ", trackingID:", trackingID)
+	user.CreatedAt = time.Now()
 	dbId, err := services.InsertUser(client, user)
 	if err != nil {
 		log.Error("Failed to create user:", err, ", trackingID:", trackingID)

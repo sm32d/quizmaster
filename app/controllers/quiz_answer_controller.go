@@ -3,6 +3,7 @@ package controllers
 import (
 	"quizmaster/app/models"
 	"quizmaster/app/services"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
@@ -46,8 +47,9 @@ func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) 
 		}
 	}
 
-	log.Info("CreateAnswerHandler : Assigning a new ID to each question", ", trackingID:", trackingID)
+	log.Info("CreateAnswerHandler : Assigning a new ID to the answer", ", trackingID:", trackingID)
 	answer.ID = primitive.NewObjectID()
+	answer.CreatedAt = time.Now()
 
 	log.Info("CreateAnswerHandler : Creating the answer", ", trackingID:", trackingID)
 	_, err = services.CreateAnswer(client, answer)
