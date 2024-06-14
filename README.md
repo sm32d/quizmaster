@@ -1,4 +1,6 @@
-# Getting Started
+# QuizMaster
+
+<img width="1436" alt="image" src="https://github.com/sm32d/quizmaster/assets/64636803/083ebf5e-6bad-447e-b786-45cfbc62f480">
 
 ## Requirements
 
