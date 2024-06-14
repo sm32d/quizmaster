@@ -1,10 +1,11 @@
-import { ArrowBackUp, MoodSadDizzy } from "tabler-icons-react";
-import Link from "next/link";
 import { getServerSession } from "next-auth";
+import Link from "next/link";
+import { ArrowNarrowLeft } from "tabler-icons-react";
 import { options } from "../../../api/auth/[...nextauth]/options";
 import NotFound from "../../../not-found";
+import { Question, Quiz } from "../../../types/quiz";
 
-async function fetchQuizDetails(id) {
+async function fetchQuizDetails(id: Quiz["id"]) {
   const backendUri = process.env.BACKEND_URI;
   const backendApiKey = process.env.BACKEND_API_KEY;
   const session = await getServerSession(options);
@@ -15,7 +16,7 @@ async function fetchQuizDetails(id) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${backendApiKey}`
+        Authorization: `Bearer ${backendApiKey}`,
       },
       body: JSON.stringify(emailObject),
       cache: "no-store",
@@ -39,35 +40,39 @@ const QuizDetails = async ({ params }) => {
         <div>
           <header>
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-              <div className="flex">
+              <div className="flex items-center">
                 <Link href="/dashboard">
-                  <button className="btn btn-xs btn-outline mt-1">
-                    <ArrowBackUp size={20} />
-                  </button>
+                  <ArrowNarrowLeft size={20} />
                 </Link>
-                <h1 className="text-2xl font-bold tracking-tigh pl-4">{`${quizDetails?.title}`}</h1>
+                <h1 className="text-xl font-medium tracking-tigh pl-2">{`${quizDetails?.title}`}</h1>
               </div>
-              <span className="badge my-4">{quizDetails?.difficulty}</span>
+              <span className="badge my-2 mx-6">{quizDetails?.difficulty}</span>
             </div>
           </header>
           <main className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-            <div className="overflow-x-auto pb-6">
+            <div className="overflow-x-auto pb-6 px-6">
               <h2 className="text-2xl">Questions</h2>
-              {quizDetails?.questions?.map((question) => (
-                <div
-                  tabIndex={0}
-                  className="my-4 collapse collapse-arrow border border-base-300"
-                >
-                  <div className="flex justify-between collapse-title text-base font-medium">
-                    {question.text}
-                    <span className="badge p-3">{question.difficulty}</span>
-                  </div>
-                  <div className="collapse-content px-10">
-                    <ul className="list-disc">
-                      {question?.choices?.map((choice) => (
-                        <li>{`${choice}`}</li>
-                      ))}
-                    </ul>
+              {quizDetails?.questions?.map((question: Question, index) => (
+                <div key={index} className="card bg-neutral mt-2 md:mx-4">
+                  <div className="card-body text-gray-300 px-4 py-2">
+                    <div className="flex flex-col">
+                      <div className="text-lg">
+                        Question {index + 1}: {question.text}
+                      </div>
+                      <div className="divider m-0"></div>
+                      <div>
+                        {question.choices.map((option, questionOptionIndex) => (
+                          <div
+                            key={questionOptionIndex}
+                            className={`flex items-center gap-2 ${
+                              option === question.correct ? "text-success" : ""
+                            }`}
+                          >
+                            {questionOptionIndex + 1}. {option}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
