@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Minus, Plus } from "tabler-icons-react";
-import { Question as OriginalQuestion, Quiz } from "../../../types/quiz";
+import { Quiz } from "../../../types/quiz";
 import { useRouter } from "next/navigation";
 import LoadingCircular from "../../../components/LoadingCircular";
 
@@ -128,7 +128,7 @@ const CreateQuizQuestions = ({
         <div className="flex flex-col h-full px-4">
           <div>
             <div className="flex flex-col pt-4">
-              <label className="text-xl flex-grow">Title:</label>
+              <label className="text-lg flex-grow">Title:</label>
               <input
                 type="text"
                 value={title}
@@ -137,7 +137,7 @@ const CreateQuizQuestions = ({
               />
             </div>
             <div className="flex flex-col pt-4">
-              <label className="text-xl flex-grow">Difficulty:</label>
+              <label className="text-lg flex-grow">Difficulty:</label>
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
@@ -170,7 +170,7 @@ const CreateQuizQuestions = ({
               <div key={questionIndex} className="card bg-neutral mt-4">
                 <div className="card-body text-gray-300">
                   <div className="flex flex-col">
-                    <label className="text-xl flex-grow">{`Question ${
+                    <label className="text-lg flex-grow">{`Question ${
                       questionIndex + 1
                     }:`}</label>
                     <input
@@ -292,13 +292,13 @@ const CreateQuizQuestions = ({
       )}
       {step === 2 && (
         <div className="flex flex-col h-full px-4">
-          <div className="text-xl px-4 py-2">Review your quiz</div>
-          <div className="px-4 py-2 text-lg">{title}</div>
-          <div className="px-4">
+          <div className="text-lg md:px-4 pb-4">Review your quiz</div>
+          <div className="md:px-4 pt-2 text-lg">{title}</div>
+          <div className="md:px-4">
             <span className="badge">{difficulty}</span>
           </div>
           {questions.map((question, index) => (
-            <div key={index} className="card bg-neutral mt-2 mx-4">
+            <div key={index} className="card bg-neutral mt-4 md:mx-4">
               <div className="card-body text-gray-300 px-4 py-2">
                 <div className="flex flex-col">
                   <div className="text-lg">
