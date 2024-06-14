@@ -68,6 +68,38 @@ func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) 
 func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	quizId := c.Params("quizId")
 
+	// ensure that the quiz creator is the one querying the answers
+	var email models.User
+
+	if err := c.BodyParser(&email); err != nil {
+		log.Error("Failed to parse user from request body:", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
+	}
+
+	log.Info("Retrieving user:", email.Email)
+	user, err := GetUserByEmailHandler(client, email.Email, trackingID)
+	if err != nil {
+		log.Error("Failed to retrieve user:", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
+	}
+	if user == nil {
+		log.Error("User not found:", email.Email, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).SendString("User not found")
+	}
+
+	userId := user.ProviderAccountId
+
+	quiz, err := services.GetQuizByIdForEU(client, quizId)
+	if err != nil {
+		log.Error("Failed to retrieve quiz to validate creator:", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
+	}
+
+	if quiz.CreatedBy != userId {
+		return c.Status(fiber.StatusUnauthorized).SendString("Unauthorised")
+	}
+
+	// proceed to fetch answers
 	log.Info("Getting answers for quiz: ", quizId, ", trackingID:", trackingID)
 
 	answers, err := services.GetAnswersByQuiz(client, quizId)

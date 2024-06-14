@@ -21,7 +21,7 @@ func SetAnswerRoutes(app *fiber.App, client *mongo.Client) {
 	})
 
 	// Retrive all answers for a quiz
-	app.Get("/api/quiz/:quizId/answers", func(c *fiber.Ctx) error {
+	app.Post("/api/quiz/:quizId/answers", func(c *fiber.Ctx) error {
 		trackingID := c.Locals("trackingID").(string)
 		return controllers.GetAnswersByQuiz(c, client, trackingID)
 	})
