@@ -5,7 +5,7 @@ const SignInWithGithub = () => {
   return (
     <button
       onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-      className="btn btn-wide btn-neutral"
+      className="btn btn-wide btn-primary"
     >
       <BrandGithub size={20} /> With Github
     </button>

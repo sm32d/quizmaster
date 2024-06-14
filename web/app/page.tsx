@@ -16,11 +16,11 @@ export default async function Home() {
           </p>
           {session ? (
             <Link href="/dashboard">
-              <button className="btn btn-neutral">Let's Go</button>
+              <button className="btn btn-primary">Let's Go</button>
             </Link>
           ) : (
             <Link href="/login">
-              <button className="btn btn-neutral">Log In</button>
+              <button className="btn btn-primary">Log In</button>
             </Link>
           )}
         </div>

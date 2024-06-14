@@ -5,7 +5,7 @@ const SignInWithFacebook = () => {
   return (
     <button
       onClick={() => signIn("facebook", { callbackUrl: "/dashboard" })}
-      className="btn btn-wide btn-neutral"
+      className="btn btn-wide btn-primary"
     >
       <BrandFacebook size={20} /> With Facebook
     </button>

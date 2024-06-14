@@ -5,7 +5,7 @@ const SignInWithGoogle = () => {
   return (
     <button
       onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-      className="btn btn-wide btn-neutral"
+      className="btn btn-wide btn-primary"
     >
       <BrandGoogle size={20} /> With Google
     </button>

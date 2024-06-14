@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   const APP_NAME = process.env.APP_NAME;
   return (
-    <footer className="footer footer-center p-10 bg-base-100 text-base-content border-t border-dashed border-neutral dark:border-base-content">
+    <footer className="footer footer-center p-10 text-base-content border-t border-dashed border-neutral dark:border-base-content">
       <aside>
         <svg
           width="50"

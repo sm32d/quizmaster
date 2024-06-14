@@ -19,13 +19,13 @@ const ShareQuiz = ({ quizId }: { quizId: string }) => {
         <Share size={20} />
       </Link>
       <dialog id="share_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
+        <div className="modal-box border border-dotted border-neutral shadow-xl">
           <h3 className="font-bold text-lg">Copied 🎉🎉</h3>
           <p className="py-2">Link copied to your clipboard.</p>
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
             <form method="dialog">
-              <button className="btn btn-neutral">Great!</button>
+              <button className="btn btn-primary">Great!</button>
             </form>
           </div>
         </div>

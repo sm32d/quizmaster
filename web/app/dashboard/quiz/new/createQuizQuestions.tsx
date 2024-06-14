@@ -123,7 +123,7 @@ const CreateQuizQuestions = ({
   };
 
   return (
-    <div className="min-w-[92svw] min-h-[82svh]">
+    <div className="min-w-full min-h-[82svh]">
       {step === 0 && (
         <div className="flex flex-col h-full px-4">
           <div>
@@ -154,7 +154,7 @@ const CreateQuizQuestions = ({
           </div>
           <div className="py-10 flex justify-end">
             <button
-              className="btn btn-neutral btn-active"
+              className="btn btn-primary btn-active"
               onClick={nextStep}
               disabled={!title || !difficulty}
             >
@@ -167,8 +167,8 @@ const CreateQuizQuestions = ({
         <div className="flex flex-col h-full px-4">
           <div>
             {questions.map((question, questionIndex) => (
-              <div key={questionIndex} className="card bg-neutral mt-4">
-                <div className="card-body text-gray-300">
+              <div key={questionIndex} className="card bg-base-300 mt-4">
+                <div className="card-body">
                   <div className="flex flex-col">
                     <label className="text-lg flex-grow">{`Question ${
                       questionIndex + 1
@@ -186,7 +186,7 @@ const CreateQuizQuestions = ({
                           undefined
                         )
                       }
-                      className="input input-bordered flex-grow mt-2"
+                      className="input input-bordered flex-grow mt-2 bg-base-200"
                     />
                   </div>
                   <div className="flex flex-col gap-2">
@@ -207,7 +207,7 @@ const CreateQuizQuestions = ({
                                 questionOptionIndex
                               )
                             }
-                            className="input input-bordered flex-grow mt-2"
+                            className="input input-bordered flex-grow mt-2 bg-base-200"
                           />
                           <button
                             className="btn btn-square btn-sm"
@@ -248,7 +248,7 @@ const CreateQuizQuestions = ({
                         onChange={(e) =>
                           updateCorrectAnswer(questionIndex, e.target.value)
                         }
-                        className="select select-bordered flex-grow mt-2"
+                        className="select select-bordered flex-grow mt-2 bg-base-200"
                       >
                         <option disabled selected value="">
                           Select correct option
@@ -267,20 +267,20 @@ const CreateQuizQuestions = ({
           </div>
           <div>
             <button
-              className="mt-5 btn btn-sm btn-neutral btn-outline"
+              className="mt-5 btn btn-sm btn-primary btn-outline"
               onClick={addQuestion}
             >
               Add Question
             </button>
             <div className="py-10 flex justify-between items-center gap-2">
               <button
-                className="btn btn-sm btn-neutral btn-outline"
+                className="btn btn-sm btn-primary btn-outline"
                 onClick={previousStep}
               >
                 Previous
               </button>
               <button
-                className="btn btn-neutral btn-active"
+                className="btn btn-primary btn-active"
                 disabled={!checkIfAllQuestionsFilled()}
                 onClick={nextStep}
               >
@@ -298,8 +298,8 @@ const CreateQuizQuestions = ({
             <span className="badge">{difficulty}</span>
           </div>
           {questions.map((question, index) => (
-            <div key={index} className="card bg-neutral mt-4 md:mx-4">
-              <div className="card-body text-gray-300 px-4 py-2">
+            <div key={index} className="card bg-base-200 mt-4 md:mx-4">
+              <div className="card-body px-4 py-2">
                 <div className="flex flex-col">
                   <div className="text-lg">
                     Question {index + 1}: {question.text}
@@ -323,13 +323,13 @@ const CreateQuizQuestions = ({
           ))}
           <div className="py-10 flex justify-between items-center gap-2">
             <button
-              className="btn btn-sm btn-neutral btn-outline"
+              className="btn btn-sm btn-primary btn-outline"
               onClick={previousStep}
             >
               Previous
             </button>
             <button
-              className="btn btn-neutral btn-active"
+              className="btn btn-primary btn-active"
               disabled={isLoading}
               onClick={handleCreateQuiz}
             >

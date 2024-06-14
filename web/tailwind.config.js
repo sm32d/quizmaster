@@ -4,15 +4,15 @@ module.exports = {
     themes: [
       {
         light: {
-          primary: "#a81952",
+          primary: "#3d3951",
 
-          secondary: "#cee809",
+          secondary: "#bba0b9",
 
-          accent: "#0e8234",
+          accent: "#7e5870",
 
-          neutral: "#28202c",
+          "base-100": "#f7f6f9",
 
-          "base-100": "#ededee",
+          neutral: "#0e0d12",
 
           info: "#6cc1ef",
 
@@ -25,15 +25,15 @@ module.exports = {
       },
       {
         dark: {
-          primary: "#81f48f",
+          primary: "#b2aec6",
 
-          secondary: "#ff6b66",
+          secondary: "#5f435d",
 
-          accent: "#e5647e",
+          accent: "#a68098",
 
-          neutral: "#302932",
+          "base-100": "#3d3951",
 
-          "base-100": "#322d39",
+          neutral: "#efeef3",
 
           info: "#76bee0",
 

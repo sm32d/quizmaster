@@ -83,13 +83,13 @@ const DashboardTable = async () => {
                 <summary className="m-1 btn btn-sm">
                   <Dots />
                 </summary>
-                <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-25">
-                  <li>
+                <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-25 border border-dotted border-neutral">
+                  <li className="pb-2 border-b border-dotted border-neutral">
                     <button>
                       <ShareQuiz quizId={quiz.id} />
                     </button>
                   </li>
-                  <li>
+                  <li className="pt-2">
                     <DeleteQuizInSummaryBtn
                       quizId={quiz?.id}
                       backendUri={process.env.BACKEND_URI}

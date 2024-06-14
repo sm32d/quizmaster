@@ -10,7 +10,7 @@ const navbar = async () => {
   const session = await getServerSession(options);
   const APP_NAME = process.env.APP_NAME;
   return (
-    <div className="navbar bg-base-100 border-b border-dashed border-neutral dark:border-base-content min-h-[8svh]">
+    <div className="navbar border-b border-dashed border-neutral dark:border-base-content min-h-[8svh]">
       <details className="dropdown">
         <summary tabIndex={0} className="btn btn-ghost btn-circle">
           <svg
@@ -28,9 +28,26 @@ const navbar = async () => {
             />
           </svg>
         </summary>
+        {/* alt <ul
+          tabIndex={0}
+          className="menu menu-sm dropdown-content p-0 mt-3 z-[1] shadow bg-base-100 rounded-box w-52 border border-neutral"
+        >
+          <li className="border-b border-neutral">
+            <Link className="py-2 px-4" href="/">Home</Link>
+          </li>
+          {session ? (
+            <li className="border-b border-neutral">
+              <Link className="py-2 px-4" href="/dashboard">Dashboard</Link>
+            </li>
+          ) : null}
+
+          <li>
+            <a className="py-2 px-4">About</a>
+          </li>
+        </ul> */}
         <ul
           tabIndex={0}
-          className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-dotted border-neutral"
         >
           <li>
             <Link href="/">Home</Link>
@@ -64,7 +81,7 @@ const navbar = async () => {
             </summary>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-dotted border-neutral"
             >
               <li>
                 <a className="justify-between">

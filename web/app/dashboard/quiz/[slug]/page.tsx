@@ -53,8 +53,8 @@ const QuizDetails = async ({ params }) => {
             <div className="overflow-x-auto pb-6 px-6">
               <h2 className="text-2xl">Questions</h2>
               {quizDetails?.questions?.map((question: Question, index) => (
-                <div key={index} className="card bg-neutral mt-2 md:mx-4">
-                  <div className="card-body text-gray-300 px-4 py-2">
+                <div key={index} className="card bg-base-300 mt-2 md:mx-4">
+                  <div className="card-body px-4 py-2">
                     <div className="flex flex-col">
                       <div className="text-lg">
                         Question {index + 1}: {question.text}

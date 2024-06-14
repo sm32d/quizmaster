@@ -39,7 +39,7 @@ const DeleteQuizInSummaryBtn = ({ quizId, backendUri, backendApiKey }: { quizId:
         id={`delete_quiz_${quizId}_modal`}
         className="modal modal-bottom sm:modal-middle"
       >
-        <div className="modal-box">
+        <div className="modal-box border border-dotted border-neutral shadow-xl">
           <h3 className="font-bold text-lg">Delete Quiz</h3>
           <p className="py-4">
             Are you sure that you want to delete this quiz? This is
@@ -48,7 +48,7 @@ const DeleteQuizInSummaryBtn = ({ quizId, backendUri, backendApiKey }: { quizId:
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
             <form method="dialog">
-              <button className="btn btn-neutral">Cancel</button>
+              <button className="btn btn-primary">Cancel</button>
             </form>
             <form method="dialog">
               <button onClick={handleDelete} className="btn btn-error">

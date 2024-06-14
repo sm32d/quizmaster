@@ -4,7 +4,7 @@ import { Plus } from "tabler-icons-react";
 const CreateNewQuizBtn = () => {
   return (
     <Link href="/dashboard/quiz/new">
-      <button className="btn btn-neutral">
+      <button className="btn btn-primary">
         <Plus size={20} />
         <div className="max-md:hidden">New Quiz</div>
       </button>
