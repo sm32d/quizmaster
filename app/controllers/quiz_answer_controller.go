@@ -97,6 +97,11 @@ func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) err
 		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
 	}
 
+	if quiz == nil {
+		log.Error("Quiz not found:", quizId, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
+	}
+
 	if quiz.CreatedBy != userId {
 		return c.Status(fiber.StatusUnauthorized).SendString("Unauthorised")
 	}
