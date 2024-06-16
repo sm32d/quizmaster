@@ -79,7 +79,7 @@ const DashboardTable = async () => {
               <div className="text-sm opacity-60">{quiz?.difficulty}</div>
             </td>
             <td>
-              <details className="dropdown max-md:dropdown-bottom md:dropdown-right">
+              <details className="dropdown max-lg:dropdown-left lg:dropdown-right">
                 <summary className="m-1 btn btn-sm">
                   <Dots />
                 </summary>

@@ -15,7 +15,7 @@ const SignOut = () => {
         id="sign_out_modal"
         className="modal modal-bottom sm:modal-middle"
       >
-        <div className="modal-box border border-dotted border-neutral shadow-xl">
+        <div className="modal-box sm:border sm:border-dotted sm:border-neutral shadow-xl">
           <h3 className="font-bold text-lg">Sign Out</h3>
           <p className="py-4">Are you sure that you want to sign out?</p>
           <div className="modal-action">
