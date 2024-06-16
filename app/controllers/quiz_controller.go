@@ -142,6 +142,103 @@ func GetQuizById(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	return c.JSON(quiz)
 }
 
+func calculateQuizStats(quiz models.Quiz, answers []models.Answer) models.QuizStats {
+	numberOfAttempts := len(answers)
+	totalScore := 0.0
+
+	// Map to track the number of attempts per user
+	userAttempts := make(map[string]int)
+
+	for _, answer := range answers {
+		totalScore += calculateScore(quiz, answer)
+
+		userAttempts[answer.UserID]++
+	}
+
+	averageScore := 0.0
+	if numberOfAttempts > 0 {
+		averageScore = totalScore / float64(numberOfAttempts)
+	}
+
+	averageAttemptsPerUser := 0.0
+	if len(userAttempts) > 0 {
+		averageAttemptsPerUser = float64(numberOfAttempts) / float64(len(userAttempts))
+	}
+
+	return models.QuizStats{
+		NumberOfAttempts:       numberOfAttempts,
+		AverageScore:           averageScore,
+		AverageAttemptsPerUser: averageAttemptsPerUser,
+	}
+}
+
+func calculateScore(quiz models.Quiz, answer models.Answer) float64 {
+	correctAnswers := 0
+	for _, question := range quiz.Questions {
+		for _, ans := range answer.Answers {
+			if ans.QuestionID == question.ID.Hex() && ans.Answer == question.Correct {
+				correctAnswers++
+			}
+		}
+	}
+	return float64(correctAnswers) / float64(len(quiz.Questions)) * 100 // score as percentage
+}
+
+func GetStatsForQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
+	quizId := c.Params("id")
+
+	// ensure that the quiz creator is the one querying the answers
+	var email models.User
+
+	if err := c.BodyParser(&email); err != nil {
+		log.Error("Failed to parse user from request body:", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
+	}
+
+	log.Info("Retrieving user:", email.Email)
+	user, err := GetUserByEmailHandler(client, email.Email, trackingID)
+	if err != nil {
+		log.Error("Failed to retrieve user:", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
+	}
+	if user == nil {
+		log.Error("User not found:", email.Email, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).SendString("User not found")
+	}
+
+	userId := user.ProviderAccountId
+
+	quiz, err := services.GetQuizByIdForEU(client, quizId)
+	if err != nil {
+		log.Error("Failed to retrieve quiz to validate creator:", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
+	}
+
+	if quiz == nil {
+		log.Error("Quiz not found:", quizId, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
+	}
+
+	if quiz.CreatedBy != userId {
+		return c.Status(fiber.StatusUnauthorized).SendString("Unauthorised")
+	}
+
+	// proceed to fetch answers
+	log.Info("Getting answers for quiz to calculate stats: ", quizId, ", trackingID:", trackingID)
+
+	answers, err := services.GetAnswersByQuiz(client, quizId)
+	if err != nil {
+		log.Error("Failed to get answers for quiz: ", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Internal Server Error",
+		})
+	}
+
+	// calculate stats based on the answers
+	stats := calculateQuizStats(*quiz, answers)
+	return c.Status(fiber.StatusOK).JSON(stats)
+}
+
 // GetQuizByIdForEU retrieves a quiz by ID
 func GetQuizByIdForEU(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	quizID := c.Params("id")
@@ -185,7 +282,7 @@ func UpdateQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	}
 
 	// Update the quiz in the database
-	for i := range updatedQuiz.Questions { 
+	for i := range updatedQuiz.Questions {
 		// Update the ID of each question
 		if i < len(quiz.Questions) {
 			updatedQuiz.Questions[i].ID = quiz.Questions[i].ID

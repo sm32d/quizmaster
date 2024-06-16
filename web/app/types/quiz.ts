@@ -30,3 +30,9 @@ export type QuestionAnswer = {
     question_id: string;
     answer: string;
 }
+
+export type Stats = {
+    attempts: number;
+    average_score: number;
+    average_attempts_per_user: number;
+}

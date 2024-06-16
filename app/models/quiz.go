@@ -19,3 +19,9 @@ type Quiz struct {
 	UpdatedAt             time.Time          `json:"updated_at" bson:"updated_at"`
 	CreatedBy             string             `json:"created_by" bson:"created_by"`
 }
+
+type QuizStats struct {
+	NumberOfAttempts       int     `json:"attempts"`
+	AverageScore           float64 `json:"average_score"`
+	AverageAttemptsPerUser float64 `json:"average_attempts_per_user"`
+}

@@ -4,6 +4,7 @@ import { ArrowNarrowLeft } from "tabler-icons-react";
 import { options } from "../../../api/auth/[...nextauth]/options";
 import NotFound from "../../../not-found";
 import { Question, Quiz } from "../../../types/quiz";
+import QuizStats from "../../../components/QuizStats";
 
 async function fetchQuizDetails(id: Quiz["id"]) {
   const backendUri = process.env.BACKEND_URI;
@@ -35,7 +36,7 @@ async function fetchQuizDetails(id: Quiz["id"]) {
 const QuizDetails = async ({ params }) => {
   const quizDetails = await fetchQuizDetails(params.slug);
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[92svh]">
       {quizDetails ? (
         <div>
           <header>
@@ -49,33 +50,45 @@ const QuizDetails = async ({ params }) => {
               <span className="badge my-2 mx-6">{quizDetails?.difficulty}</span>
             </div>
           </header>
-          <main className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-            <div className="overflow-x-auto pb-6 px-6">
-              <h2 className="text-2xl">Questions</h2>
-              {quizDetails?.questions?.map((question: Question, index) => (
-                <div key={index} className="card bg-base-300 mt-2 md:mx-4">
-                  <div className="card-body px-4 py-2">
-                    <div className="flex flex-col">
-                      <div className="text-lg">
-                        Question {index + 1}: {question.text}
-                      </div>
-                      <div className="divider m-0"></div>
-                      <div>
-                        {question.choices.map((option, questionOptionIndex) => (
-                          <div
-                            key={questionOptionIndex}
-                            className={`flex items-center gap-2 ${
-                              option === question.correct ? "text-success" : ""
-                            }`}
-                          >
-                            {questionOptionIndex + 1}. {option}
+          <main className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8 flex flex-col gap-2">
+            <QuizStats quizId={quizDetails?.id} showMoreOption={true} />
+            <div className="collapse collapse-arrow bg-base-200">
+              <input type="checkbox" name="quiz-details" defaultChecked/>
+              <div className="collapse-title text-xl font-medium">
+                Questions
+              </div>
+              <div className="collapse-content">
+                <div className="overflow-x-auto pb-6 px-4">
+                  {quizDetails?.questions?.map((question: Question, index) => (
+                    <div key={index} className="card bg-base-300 mt-2 md:mx-4">
+                      <div className="card-body px-4 py-2">
+                        <div className="flex flex-col">
+                          <div className="text-lg">
+                            Question {index + 1}: {question.text}
                           </div>
-                        ))}
+                          <div className="divider m-0"></div>
+                          <div>
+                            {question.choices.map(
+                              (option, questionOptionIndex) => (
+                                <div
+                                  key={questionOptionIndex}
+                                  className={`flex items-center gap-2 ${
+                                    option === question.correct
+                                      ? "text-success"
+                                      : ""
+                                  }`}
+                                >
+                                  {questionOptionIndex + 1}. {option}
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </main>
         </div>

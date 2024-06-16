@@ -35,6 +35,12 @@ func SetQuizRoutes(app *fiber.App, client *mongo.Client) {
 		return controllers.GetQuizById(c, client, trackingID)
 	})
 
+	// Retrieve stats for a quiz
+	app.Post("/api/quiz/:id/stats", func(c *fiber.Ctx) error {
+		trackingID := c.Locals("trackingID").(string)
+		return controllers.GetStatsForQuiz(c, client, trackingID)
+	})
+
 	// Retrieve a quiz by ID (for End Users)
 	app.Get("/api/quiz/:id", func(c *fiber.Ctx) error {
 		trackingID := c.Locals("trackingID").(string)
