@@ -4,7 +4,7 @@ import { ArrowNarrowLeft } from "tabler-icons-react";
 import { options } from "../../../api/auth/[...nextauth]/options";
 import NotFound from "../../../not-found";
 import { Question, Quiz } from "../../../types/quiz";
-import QuizStats from "../../../components/QuizStats";
+import QuizStats from "../../../components/quizAnswers/QuizStats";
 
 async function fetchQuizDetails(id: Quiz["id"]) {
 const backendUri = process.env.BACKEND_URI;

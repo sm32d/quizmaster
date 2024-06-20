@@ -8,20 +8,14 @@ const backendApiKey = process.env.BACKEND_API_KEY;
 
 const fetchQuizAnswers = async (id: Quiz["id"], page: number) => {
   const session = await getServerSession(options);
-  const request: { email: string; page: number; per_page: number } = {
-    email: session.user.email,
-    page,
-    per_page: 5,
-  };
 
   try {
     const response = await fetch(`${backendUri}/api/quiz/${id}/answers`, {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${backendApiKey}`,
       },
-      body: JSON.stringify(request),
       cache: "no-store",
     });
     if (!response.ok) {
@@ -57,7 +51,6 @@ const QuizAnswerCards = async ({ quizDetails }: { quizDetails: Quiz }) => {
     answers: QuizAnswer[];
     pages: { current_page: number; total_pages: number };
   } = await fetchQuizAnswers(quizDetails.id, 1);
-  console.log(quizAnswers);
   return (
     <div className="flex flex-col items-center gap-10">
       <div className="pt-4 flex flex-wrap justify-center gap-4">
@@ -95,11 +88,11 @@ const QuizAnswerCards = async ({ quizDetails }: { quizDetails: Quiz }) => {
           </div>
         ))}
       </div>
-      <div className="join">
+      {/* <div className="join">
         <button className="join-item btn">«</button>
         <button className="join-item btn">Page 1</button>
         <button className="join-item btn">»</button>
-      </div>
+      </div> */}
     </div>
   );
 };

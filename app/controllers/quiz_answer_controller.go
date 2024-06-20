@@ -12,9 +12,8 @@ import (
 )
 
 type GetAnswerByQuizStruct struct {
-	Email   string `json:"email" validate:"required,email"`
-	Page    int    `json:"page"`
-	PerPage int    `json:"per_page" default:"10"`
+	Page    int `json:"page"`
+	PerPage int `json:"per_page" default:"10"`
 }
 
 func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
@@ -73,27 +72,8 @@ func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) 
 }
 
 // GetAnswersByQuiz retrieves all answers for a quiz.
-func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
+func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string, page, perPage int) error {
 	quizId := c.Params("quizId")
-
-	var request GetAnswerByQuizStruct
-	if err := c.BodyParser(&request); err != nil {
-		log.Error("Failed to parse request body:", err, ", trackingID:", trackingID)
-		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
-	}
-
-	log.Info("Retrieving user:", request.Email)
-	user, err := GetUserByEmailHandler(client, request.Email, trackingID)
-	if err != nil {
-		log.Error("Failed to retrieve user:", err, ", trackingID:", trackingID)
-		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
-	}
-	if user == nil {
-		log.Error("User not found:", request.Email, ", trackingID:", trackingID)
-		return c.Status(fiber.StatusNotFound).SendString("User not found")
-	}
-
-	userId := user.ProviderAccountId
 
 	quiz, err := services.GetQuizByIdForEU(client, quizId)
 	if err != nil {
@@ -106,16 +86,12 @@ func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) err
 		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
 	}
 
-	if quiz.CreatedBy != userId {
-		return c.Status(fiber.StatusUnauthorized).SendString("Unauthorised")
-	}
-
 	// proceed to fetch answers
 	log.Info("Retrieving answers for quiz: ", quizId, ", trackingID:", trackingID)
 	// log retrival of answers by page number
-	log.Info("Retrieving answers by page number: ", request.Page, ", per page: ", request.PerPage, ", trackingID:", trackingID)
+	log.Info("Retrieving answers by page number: ", page, ", per page: ", perPage, ", trackingID:", trackingID)
 
-	answers, pages, err := services.GetAnswersByQuizPaginated(client, quizId, request.Page, request.PerPage)
+	answers, pages, err := services.GetAnswersByQuizPaginated(client, quizId, page, perPage)
 	if err != nil {
 		log.Error("Failed to get answers for quiz: ", err, ", trackingID:", trackingID)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

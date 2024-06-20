@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
-import { options } from "../api/auth/[...nextauth]/options";
-import { Stats } from "../types/quiz";
+import { options } from "../../api/auth/[...nextauth]/options";
+import { Stats } from "../../types/quiz";
 import Link from "next/link";
 
 const fetchStats = async (quizId: string) => {
@@ -53,7 +53,10 @@ const QuizStats = async ({
             {(stats?.average_score ?? 0).toFixed(2)}%
           </div>
           <div className="stat-desc">
-            {stats?.average_score > 50 ? "Good" : "Bad"}
+            {stats?.average_score > 80 ? "Excellent" : 
+            stats?.average_score > 60 ? "Good" : 
+            stats?.average_score > 40 ? "Okay" : 
+            (stats?.attempts ?? 0) > 0 ? "Poor" : "-"}
           </div>
         </div>
 
@@ -67,7 +70,7 @@ const QuizStats = async ({
           <div className="stat-desc">on average</div>
         </div>
       </div>
-      {showMoreOption && (
+      {showMoreOption && stats.attempts > 0 && (
         <Link
           href={`/dashboard/quiz/${quizId}/stats`}
           className="link link-primary link-hover"
