@@ -2,11 +2,13 @@ package services
 
 import (
 	"context"
+	"math"
 	"quizmaster/app/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 /**
@@ -32,44 +34,116 @@ func CreateAnswer(client *mongo.Client, answer models.Answer) (*mongo.InsertOneR
 	return result, nil
 }
 
-/**
-* @brief Retrieve all answers from the MongoDB database for a quiz.
+/** GetAnswersByQuiz retrieves all answers from the MongoDB database for a quiz.
 *
-* @param client A pointer to the MongoDB client.
-* @param quizId The ID of the quiz to retrieve answers for.
+* Parameters:
+* - client: A pointer to the MongoDB client.
+* - quizID: The ID of the quiz to retrieve answers for.
+* - limit (optional): The maximum number of answers to retrieve.
 *
-* @return A slice of pointers to the retrieved answers, or nil if no answers were found.
+* Returns:
+* - answers: A slice of models.Answer containing the retrieved answers.
+* - error: An error if the retrieval fails.
  */
-func GetAnswersByQuiz(client *mongo.Client, quizId string) ([]models.Answer, error) {
+func GetAnswersByQuiz(client *mongo.Client, quizID string, limit ...int) ([]models.Answer, error) {
 	collection := client.Database("quizmaster").Collection("answers")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{"quiz_id": quizId}
+	filter := bson.M{"quiz_id": quizID}
 
-	cursor, err := collection.Find(ctx, filter)
+	// Create options to sort the answers by creation time in descending order
+	// and limit the number of answers returned
+	opts := options.Find()
+	if len(limit) > 0 {
+		opts.SetSort(bson.M{"created_at": -1}).SetLimit(int64(limit[0]))
+	}
+
+	// Execute the find operation and retrieve the cursor
+	cursor, err := collection.Find(ctx, filter, opts)
 	if err != nil {
-		return nil, err // Handle database connection issues or other errors
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
+	// Declare a slice to store the answers
 	var answers []models.Answer
 
-	// Iterate through the cursor and decode documents into the slice
+	// Iterate through the cursor and decode the documents into the answers slice
 	for cursor.Next(ctx) {
 		var answer models.Answer
 		if err := cursor.Decode(&answer); err != nil {
-			return nil, err // Handle decoding errors
+			return nil, err
 		}
 		answers = append(answers, answer)
 	}
 
-	if err := cursor.Err(); err != nil {
-		return nil, err // Handle any cursor errors
+	return answers, nil
+}
+
+// GetAnswersByQuizPaginated retrieves paginated answers for a quiz.
+//
+// Parameters:
+// - client: A pointer to the MongoDB client.
+// - quizID: The ID of the quiz to retrieve answers for.
+// - page: The current page number for pagination.
+// - perPage: The number of answers per page for pagination.
+// Returns:
+// - A slice of models.Answer containing the paginated answers.
+// - An error if the retrieval fails.
+func GetAnswersByQuizPaginated(client *mongo.Client, quizID string, page, perPage int) ([]models.Answer, pages, error) {
+	collection := client.Database("quizmaster").Collection("answers")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"quiz_id": quizID}
+
+	// Calculate the skip value based on the page and perPage parameters
+	skip := (page - 1) * perPage
+
+	// Count the total number of answers
+	count, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, pages{}, err
 	}
 
-	return answers, nil
+	// Calculate the number of pages
+	pages := pages{
+		TotalPages:  int(math.Ceil(float64(count) / float64(perPage))),
+		CurrentPage: page,
+	}
+
+	// Create options to sort the answers by creation time in descending order
+	// and limit the number of answers returned
+	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(int64(perPage)).SetSkip(int64(skip))
+
+	// Execute the find operation and retrieve the cursor
+	cursor, err := collection.Find(ctx, filter, opts)
+	if err != nil {
+		return nil, pages, err
+	}
+	defer cursor.Close(ctx)
+
+	// Declare a slice to store the answers
+	var answers []models.Answer
+
+	// Iterate through the cursor and decode the documents into the answers slice
+	for cursor.Next(ctx) {
+		var answer models.Answer
+		if err := cursor.Decode(&answer); err != nil {
+			return nil, pages, err
+		}
+		answers = append(answers, answer)
+	}
+
+	return answers, pages, nil
+}
+
+type pages struct {
+	TotalPages  int `json:"total_pages"`
+	CurrentPage int `json:"current_page"`
 }
 
 /**

@@ -10,7 +10,7 @@ import (
 // SetAnswerRoutes sets up the answer routes for the given fiber app and MongoDB client.
 // It handles the following routes:
 //   - POST /api/answer: Creates a new answer.
-//   - GET /api/quiz/:quizId/answers: Retrieves all answers for a quiz.
+//   - POST /api/quiz/:quizId/answers: Retrieves all answers for a quiz.
 //   - GET /api/quiz/:quizId/user/:userId/answer: Retrieves the answer for a quiz by a user.
 //   - GET /api/quiz/:quizId/question/:questionId/answers: Retrieves all answers for a question.
 func SetAnswerRoutes(app *fiber.App, client *mongo.Client) {

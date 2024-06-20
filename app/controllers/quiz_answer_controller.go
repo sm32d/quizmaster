@@ -11,6 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type GetAnswerByQuizStruct struct {
+	Email   string `json:"email" validate:"required,email"`
+	Page    int    `json:"page"`
+	PerPage int    `json:"per_page" default:"10"`
+}
+
 func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	var answer models.Answer
 
@@ -70,22 +76,20 @@ func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) 
 func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	quizId := c.Params("quizId")
 
-	// ensure that the quiz creator is the one querying the answers
-	var email models.User
-
-	if err := c.BodyParser(&email); err != nil {
-		log.Error("Failed to parse user from request body:", err, ", trackingID:", trackingID)
+	var request GetAnswerByQuizStruct
+	if err := c.BodyParser(&request); err != nil {
+		log.Error("Failed to parse request body:", err, ", trackingID:", trackingID)
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
 
-	log.Info("Retrieving user:", email.Email)
-	user, err := GetUserByEmailHandler(client, email.Email, trackingID)
+	log.Info("Retrieving user:", request.Email)
+	user, err := GetUserByEmailHandler(client, request.Email, trackingID)
 	if err != nil {
 		log.Error("Failed to retrieve user:", err, ", trackingID:", trackingID)
 		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
 	}
 	if user == nil {
-		log.Error("User not found:", email.Email, ", trackingID:", trackingID)
+		log.Error("User not found:", request.Email, ", trackingID:", trackingID)
 		return c.Status(fiber.StatusNotFound).SendString("User not found")
 	}
 
@@ -107,9 +111,11 @@ func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) err
 	}
 
 	// proceed to fetch answers
-	log.Info("Getting answers for quiz: ", quizId, ", trackingID:", trackingID)
+	log.Info("Retrieving answers for quiz: ", quizId, ", trackingID:", trackingID)
+	// log retrival of answers by page number
+	log.Info("Retrieving answers by page number: ", request.Page, ", per page: ", request.PerPage, ", trackingID:", trackingID)
 
-	answers, err := services.GetAnswersByQuiz(client, quizId)
+	answers, pages, err := services.GetAnswersByQuizPaginated(client, quizId, request.Page, request.PerPage)
 	if err != nil {
 		log.Error("Failed to get answers for quiz: ", err, ", trackingID:", trackingID)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -121,6 +127,7 @@ func GetAnswersByQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) err
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"answers": answers,
+		"pages":   pages,
 	})
 }
 
