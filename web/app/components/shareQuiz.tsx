@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { Share } from "tabler-icons-react";
 const ShareQuiz = ({ quizId }: { quizId: string }) => {
   return (
