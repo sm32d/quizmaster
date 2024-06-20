@@ -21,9 +21,11 @@ export type Question = {
 };
 
 export type QuizAnswer = {
+    id?: string;
     quiz_id: string;
     user_id: string;
     answers: QuestionAnswer[];
+    created_at?: string;
 }
 
 export type QuestionAnswer = {
