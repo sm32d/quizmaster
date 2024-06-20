@@ -23,7 +23,7 @@ async function fetchQuizzes() {
         headers: {
           Authorization: `Bearer ${backendApiKey}`,
         },
-      },
+      }
     );
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -85,9 +85,7 @@ const DashboardTable = async () => {
                 </summary>
                 <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-25 border border-dotted border-neutral">
                   <li className="pb-2 border-b border-dotted border-neutral">
-                    <button>
-                      <ShareQuiz quizId={quiz.id} />
-                    </button>
+                    <ShareQuiz quizId={quiz.id} />
                   </li>
                   <li className="pt-2">
                     <DeleteQuizInSummaryBtn

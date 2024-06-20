@@ -38,7 +38,6 @@ const QuizStats = async ({
   showMoreOption?: boolean;
 }) => {
   const stats: Stats = await fetchStats(quizId);
-  console.log(stats);
   return (
     <div className="flex flex-col gap-2 px-4">
       <div className="stats stats-vertical md:stats-horizontal shadow">
@@ -50,7 +49,9 @@ const QuizStats = async ({
 
         <div className="stat place-items-center">
           <div className="stat-title">Average Score</div>
-          <div className="stat-value">{stats?.average_score}%</div>
+          <div className="stat-value">
+            {(stats?.average_score ?? 0).toFixed(2)}%
+          </div>
           <div className="stat-desc">
             {stats?.average_score > 50 ? "Good" : "Bad"}
           </div>
@@ -58,7 +59,11 @@ const QuizStats = async ({
 
         <div className="stat place-items-center">
           <div className="stat-title">Attempts Per User</div>
-          <div className="stat-value">{stats?.average_attempts_per_user}</div>
+          <div className="stat-value">
+            {Math.abs(stats?.average_attempts_per_user ?? 0) % 1 === 0
+              ? Math.trunc(stats?.average_attempts_per_user ?? 0)
+              : (stats?.average_attempts_per_user ?? 0).toFixed(2)}
+          </div>
           <div className="stat-desc">on average</div>
         </div>
       </div>

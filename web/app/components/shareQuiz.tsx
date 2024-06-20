@@ -5,8 +5,7 @@ const ShareQuiz = ({ quizId }: { quizId: string }) => {
   return (
     <div>
       {/* Open the modal using document.getElementById('ID').showModal() method */}
-      <Link
-        href=""
+      <button
         onClick={() => {
           navigator.clipboard.writeText(
             `${window.location.origin}/eu/${quizId}`,
@@ -17,7 +16,7 @@ const ShareQuiz = ({ quizId }: { quizId: string }) => {
         }}
       >
         <Share size={20} />
-      </Link>
+      </button>
       <dialog id="share_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box sm:border sm:border-dotted sm:border-neutral shadow-xl">
           <h3 className="font-bold text-lg">Copied 🎉🎉</h3>
