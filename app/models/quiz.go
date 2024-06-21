@@ -15,6 +15,8 @@ type Quiz struct {
 	Questions             []Question         `json:"questions" bson:"questions"`
 	CollectEmail          bool               `json:"collect_email" bson:"collect_email"`
 	AllowMultipleAttempts bool               `json:"allow_multiple_attempts" bson:"allow_multiple_attempts"`
+	Timer                 int                `json:"timer" bson:"timer"`
+	RandomiseQuestions    bool               `json:"randomise_questions" bson:"randomise_questions"`
 	CreatedAt             time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt             time.Time          `json:"updated_at" bson:"updated_at"`
 	CreatedBy             string             `json:"created_by" bson:"created_by"`

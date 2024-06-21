@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -32,6 +33,43 @@ func CreateAnswer(client *mongo.Client, answer models.Answer) (*mongo.InsertOneR
 	}
 
 	return result, nil
+}
+
+func UpdateAnswer(client *mongo.Client, answer *models.Answer) (*mongo.UpdateResult, error) {
+	collection := client.Database("quizmaster").Collection("answers")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": answer.ID}
+	update := bson.M{"$set": answer}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func GetAnswerById(client *mongo.Client, answerId primitive.ObjectID) (*models.Answer, error) {
+	collection := client.Database("quizmaster").Collection("answers")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": answerId}
+
+	var answer models.Answer
+	err := collection.FindOne(ctx, filter).Decode(&answer)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &answer, nil
 }
 
 /** GetAnswersByQuiz retrieves all answers from the MongoDB database for a quiz.
@@ -184,7 +222,7 @@ func GetAnswerForQuizByUser(client *mongo.Client, quizId string, userId string) 
 *
 * @return A slice of pointers to the retrieved answers, or nil if no answers were found.
  */
-func GetAnswersByQuestion(client *mongo.Client, quizId string, questionId string) ([]models.QuestionAnswer, error) {
+func GetAnswersByQuestion(client *mongo.Client, quizId string, questionId primitive.ObjectID) ([]models.QuestionAnswer, error) {
 	collection := client.Database("quizmaster").Collection("answers")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

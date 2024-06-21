@@ -15,6 +15,18 @@ import (
 //   - GET /api/quiz/:quizId/user/:userId/answer: Retrieves the answer for a quiz by a user.
 //   - GET /api/quiz/:quizId/question/:questionId/answers: Retrieves all answers for a question.
 func SetAnswerRoutes(app *fiber.App, client *mongo.Client) {
+	// check eligibility for a quiz
+	app.Post("/api/quiz/:quizId/eligibility", func(c *fiber.Ctx) error {
+		trackingID := c.Locals("trackingID").(string)
+		return controllers.CheckEligibilityHandler(c, client, trackingID)
+	})
+
+	// init a new answer
+	app.Post("/api/quiz/:quizId/init-answer", func(c *fiber.Ctx) error {
+		trackingID := c.Locals("trackingID").(string)
+		return controllers.InitAnswerHandler(c, client, trackingID)
+	})
+
 	// create an answer
 	app.Post("/api/answer", func(c *fiber.Ctx) error {
 		trackingID := c.Locals("trackingID").(string)

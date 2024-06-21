@@ -25,6 +25,8 @@ export type QuizAnswer = {
     quiz_id: string;
     user_id: string;
     answers: QuestionAnswer[];
+    started_at?: string;
+    ended_at?: string;
     created_at?: string;
 }
 

@@ -113,7 +113,7 @@ func GetQuizById(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
 
-	log.Info("Retrieving user:", email.Email)
+	log.Info("Retrieving user:", email.Email, ", trackingID:", trackingID)
 	user, err := GetUserByEmailHandler(client, email.Email, trackingID)
 	if err != nil {
 		log.Error("Failed to retrieve user:", err, ", trackingID:", trackingID)
@@ -176,7 +176,7 @@ func calculateScore(quiz models.Quiz, answer models.Answer) float64 {
 	correctAnswers := 0
 	for _, question := range quiz.Questions {
 		for _, ans := range answer.Answers {
-			if ans.QuestionID == question.ID.Hex() && ans.Answer == question.Correct {
+			if ans.QuestionID == question.ID && ans.Answer == question.Correct {
 				correctAnswers++
 			}
 		}
@@ -195,7 +195,7 @@ func GetStatsForQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) erro
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
 
-	log.Info("Retrieving user:", email.Email)
+	log.Info("Retrieving user:", email.Email, ", trackingID:", trackingID)
 	user, err := GetUserByEmailHandler(client, email.Email, trackingID)
 	if err != nil {
 		log.Error("Failed to retrieve user:", err, ", trackingID:", trackingID)
