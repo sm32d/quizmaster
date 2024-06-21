@@ -5,10 +5,11 @@ import { options } from "../../../api/auth/[...nextauth]/options";
 import NotFound from "../../../not-found";
 import { Question, Quiz } from "../../../types/quiz";
 import QuizStats from "../../../components/quizAnswers/QuizStats";
+import QuizAnswerCards from "../../../components/quizAnswers/QuizAnswerCards";
 
 async function fetchQuizDetails(id: Quiz["id"]) {
-const backendUri = process.env.BACKEND_URI;
-const backendApiKey = process.env.BACKEND_API_KEY;
+  const backendUri = process.env.BACKEND_URI;
+  const backendApiKey = process.env.BACKEND_API_KEY;
   const session = await getServerSession(options);
   const emailObject = {};
   emailObject["email"] = session.user.email;
@@ -40,7 +41,7 @@ const QuizDetails = async ({ params }) => {
       {quizDetails ? (
         <div>
           <header>
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 py-6 sm:px-6 lg:px-8">
               <div className="flex items-center">
                 <Link href="/dashboard">
                   <ArrowNarrowLeft size={20} />
@@ -50,7 +51,7 @@ const QuizDetails = async ({ params }) => {
               <span className="badge my-2 mx-6">{quizDetails?.difficulty}</span>
             </div>
           </header>
-          <main className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8 flex flex-col gap-2">
+          <main className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-6 pb-6 sm:px-6 lg:px-8 flex flex-col gap-2">
             <QuizStats quizId={quizDetails?.id} showMoreOption={true} />
             <div className="collapse collapse-arrow bg-base-200">
               <input type="checkbox" name="quiz-details" defaultChecked />
@@ -80,7 +81,7 @@ const QuizDetails = async ({ params }) => {
                                 >
                                   {questionOptionIndex + 1}. {option}
                                 </div>
-                              ),
+                              )
                             )}
                           </div>
                         </div>

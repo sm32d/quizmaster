@@ -8,12 +8,12 @@ const Dashboard = async () => {
   return (
     <div className="min-h-[92svh]">
       <header>
-        <div className="flex justify-between mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex gap-3 justify-between mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 py-6 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold tracking-tight">{`Welcome, ${session.user.name}!`}</h1>
           <CreateNewQuizBtn />
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 py-6 sm:px-6 lg:px-8">
         <span className="text-2xl px-4">Quiz List</span>
         <div className="overflow-x-auto py-6">
           <DashboardTable />

@@ -55,7 +55,7 @@ const QuizAnswerCards = async ({ quizDetails }: { quizDetails: Quiz }) => {
     <div className="flex flex-col items-center gap-10">
       <div className="pt-4 flex flex-wrap justify-center gap-4">
         {quizAnswers?.answers.map((answer: QuizAnswer) => (
-          <div key={answer.id} className="card w-96 bg-base-100 shadow-xl">
+          <div key={answer.id} className="card w-80 md:w-96 bg-base-100 shadow-xl">
             <div className="card-body">
               <h2 className="card-title">{answer?.user_id}</h2>
               <p>

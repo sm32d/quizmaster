@@ -39,7 +39,7 @@ const QuizStats = async ({
 }) => {
   const stats: Stats = await fetchStats(quizId);
   return (
-    <div className="flex flex-col gap-2 px-4">
+    <div className="flex flex-col gap-2">
       <div className="stats stats-vertical md:stats-horizontal shadow">
         <div className="stat place-items-center">
           <div className="stat-title">Attempts</div>

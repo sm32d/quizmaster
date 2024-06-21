@@ -40,9 +40,9 @@ const QuizStatsPage = async ({ params }) => {
   return (
     <div className="min-h-[92svh]">
       {quizDetails ? (
-        <div>
+        <div className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 sm:px-6">
           <header>
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="py-6 sm:px-6 lg:px-8">
               <div className="flex items-center">
                 <Link href="./">
                   <ArrowNarrowLeft size={20} />
@@ -53,7 +53,7 @@ const QuizStatsPage = async ({ params }) => {
             </div>
           </header>
           <QuizStats quizId={params.slug} />
-          <main className="p-6">
+          <main className="py-6 flex flex-col items-center lg:items-start">
             <h1 className="text-xl font-bold">Answers</h1>
             <QuizAnswerCards quizDetails={quizDetails} />
           </main>
