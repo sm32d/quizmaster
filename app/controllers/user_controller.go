@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"math/rand"
 	"quizmaster/app/models"
 	"quizmaster/app/services"
 	"time"
@@ -52,6 +53,14 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) er
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
+	}
+
+	randABTestGroup := rand.Float64()
+	log.Info("Random AB test group:", randABTestGroup, ", trackingID:", trackingID)
+	if randABTestGroup < 0.5 {
+		user.ABTestGroup = "A"
+	} else {
+		user.ABTestGroup = "B"
 	}
 
 	// Check if a user with the same providerId already exists
