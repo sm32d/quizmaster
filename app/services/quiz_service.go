@@ -90,6 +90,10 @@ func GetQuizByID(client *mongo.Client, quizID string, providerAccountId string) 
 		return nil, err
 	}
 
+	if quiz == nil {
+		return nil, nil
+	}
+
 	if quiz.CreatedBy != providerAccountId {
 		return nil, nil
 	}
