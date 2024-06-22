@@ -135,6 +135,27 @@ func GetQuizByIdForEU(client *mongo.Client, quizID string) (*models.Quiz, error)
 	return &quiz, nil
 }
 
+func ToggleQuizActive(client *mongo.Client, quizID string, isActive bool) error {
+	collection := client.Database("quizmaster").Collection("quizzes")
+
+	quizObjectID, err := primitive.ObjectIDFromHex(quizID)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": quizObjectID}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err = collection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{"active": isActive}})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 /**
 * @brief Update a quiz by its ID in the MongoDB database.
 *

@@ -6,6 +6,9 @@ export type Quiz = {
     questions: Question[];
     collect_email: boolean;
     allow_multiple_attempts: boolean;
+    active?: boolean;
+    timer?: number;
+    randomise_questions?: boolean;
     created_at?: string;
     updated_at?: string;
     created_by: string;

@@ -47,6 +47,12 @@ func SetQuizRoutes(app *fiber.App, client *mongo.Client) {
 		return controllers.GetQuizByIdForEU(c, client, trackingID)
 	})
 
+	// toggle a quiz active status
+	app.Patch("/api/quiz/:id/active", func(c *fiber.Ctx) error {
+		trackingID := c.Locals("trackingID").(string)
+		return controllers.ToggleQuizActive(c, client, trackingID)
+	})
+
 	// Update a quiz by ID
 	app.Put("/api/quiz/:id", func(c *fiber.Ctx) error {
 		trackingID := c.Locals("trackingID").(string)

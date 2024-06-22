@@ -6,14 +6,17 @@ import DeleteQuizInSummaryBtn from "./buttons/btnDeleteQuizInSummary";
 import { Session } from "next-auth";
 import { Quiz } from "../types/quiz";
 import ShareQuiz from "./shareQuiz";
+import QuizToggle from "./QuizToggle";
+import { User } from "../types/user";
 
 type Quizzes = {
   quizzes: Quiz[];
 };
 
+const backendUri = process.env.BACKEND_URI;
+const backendApiKey = process.env.BACKEND_API_KEY;
+
 async function fetchQuizzes() {
-  const backendUri = process.env.BACKEND_URI;
-  const backendApiKey = process.env.BACKEND_API_KEY;
   const session: Session = await getServerSession(options);
   try {
     const response = await fetch(
@@ -36,8 +39,31 @@ async function fetchQuizzes() {
   }
 }
 
+const fetchUserABType = async () => {
+  const session = await getServerSession(options);
+  try {
+    const response = await fetch(`${backendUri}/api/user`, {
+      cache: "force-cache",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${backendApiKey}`,
+      },
+      body: JSON.stringify({ email: session.user.email }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data: User = await response.json();
+    return data.ab_test_group;
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+  }
+};
+
 const DashboardTable = async () => {
   const quizzes = await fetchQuizzes();
+  const ab = await fetchUserABType();
   return (
     <table className="table">
       {/* head */}
@@ -59,9 +85,7 @@ const DashboardTable = async () => {
         {quizzes?.quizzes?.map((quiz) => (
           <tr key={quiz.id}>
             <th>
-              <label>
-                <input type="checkbox" className="toggle" />
-              </label>
+              <QuizToggle quiz={quiz} backendUri={backendUri} backendApiKey={backendApiKey} ab={ab} />
             </th>
             <td>
               <Link href={`/dashboard/quiz/${quiz.id}`}>

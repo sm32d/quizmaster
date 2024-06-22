@@ -259,6 +259,32 @@ func GetQuizByIdForEU(c *fiber.Ctx, client *mongo.Client, trackingID string) err
 	return c.JSON(quiz)
 }
 
+func ToggleQuizActive(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
+	quizID := c.Params("id")
+
+	quiz, err := services.GetQuizByIdForEU(client, quizID)
+	if err != nil {
+		log.Error("Failed to retrieve quiz:", err, ", trackingID:", trackingID)
+		return err
+	}
+
+	if quiz == nil {
+		log.Error("Quiz not found:", quizID, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
+	}
+
+	isActive := quiz.Active
+
+	log.Info("Toggling quiz with ID:", quizID, " from ", isActive, " to ", !isActive, ", trackingID:", trackingID)
+	err = services.ToggleQuizActive(client, quizID, !isActive)
+	if err != nil {
+		log.Error("Failed to toggle quiz active:", err, ", trackingID:", trackingID)
+		return err
+	}
+	log.Info("Quiz toggled successfully", ", trackingID:", trackingID)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": !isActive})
+}
+
 // UpdateQuizHandler updates a quiz by ID
 func UpdateQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 	quizID := c.Params("id")
