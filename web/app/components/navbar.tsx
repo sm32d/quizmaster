@@ -57,10 +57,6 @@ const navbar = async () => {
               <Link href="/dashboard">Dashboard</Link>
             </li>
           ) : null}
-
-          <li>
-            <a>About</a>
-          </li>
         </ul>
       </details>
       <div className="flex-1">
@@ -85,12 +81,9 @@ const navbar = async () => {
             >
               <li>
                 <a className="justify-between">
-                  Profile
+                  Settings
                   <span className="badge badge-neutral">New</span>
                 </a>
-              </li>
-              <li>
-                <a>Settings</a>
               </li>
               <li>
                 <SignOut />

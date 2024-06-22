@@ -14,7 +14,7 @@ type User struct {
 	Role              string             `json:"role" bson:"role"`
 	Provider          string             `json:"provider" bson:"provider"`
 	ProviderAccountId string             `json:"providerAccountId" bson:"providerAccountId"`
-	ABTestGroup       string             `json:"ab_test_group" bson:"ab_test_group"`
+	ABTestGroup       bool               `json:"ab_test_group" bson:"ab_test_group"`
 	CreatedAt         time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt         time.Time          `json:"updated_at" bson:"updated_at"`
 }

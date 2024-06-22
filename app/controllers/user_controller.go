@@ -58,9 +58,9 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) er
 	randABTestGroup := rand.Float64()
 	log.Info("Random AB test group:", randABTestGroup, ", trackingID:", trackingID)
 	if randABTestGroup < 0.5 {
-		user.ABTestGroup = "A"
+		user.ABTestGroup = true
 	} else {
-		user.ABTestGroup = "B"
+		user.ABTestGroup = false
 	}
 
 	// Check if a user with the same providerId already exists

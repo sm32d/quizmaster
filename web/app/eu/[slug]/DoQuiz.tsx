@@ -61,7 +61,7 @@ const DoQuiz = ({ backendUri, backendApiKey, quizDetails }) => {
       {quizDetails ? (
         <div>
           <header>
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 py-6 sm:px-6 lg:px-8">
               <div className="flex">
                 <Link href="/dashboard">
                   <button className="btn btn-xs btn-outline mt-1">
@@ -73,7 +73,7 @@ const DoQuiz = ({ backendUri, backendApiKey, quizDetails }) => {
               <span className="badge my-4">{quizDetails?.difficulty}</span>
             </div>
           </header>
-          <main className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
+          <main className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 pb-6 sm:px-6 lg:px-8">
             <div className="flex justify-center overflow-x-auto pb-6">
               <form className="w-full md:w-1/2" action={submitAnswer}>
                 {quizDetails?.collect_email ? (

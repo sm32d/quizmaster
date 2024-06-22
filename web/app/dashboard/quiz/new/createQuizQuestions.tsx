@@ -167,7 +167,7 @@ const CreateQuizQuestions = ({
         <div className="flex flex-col h-full px-4">
           <div>
             {questions.map((question, questionIndex) => (
-              <div key={questionIndex} className="card bg-base-300 mt-4">
+              <div key={questionIndex} className="card bg-base-100 shadow-xl mt-4">
                 <div className="card-body">
                   <div className="flex flex-col">
                     <label className="text-lg flex-grow">{`Question ${

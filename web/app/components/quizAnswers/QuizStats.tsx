@@ -50,13 +50,21 @@ const QuizStats = async ({
         <div className="stat place-items-center">
           <div className="stat-title">Average Score</div>
           <div className="stat-value">
-            {(stats?.average_score ?? 0).toFixed(2)}%
+            {Math.abs(stats?.average_score ?? 0) % 1 === 0
+              ? Math.trunc(stats?.average_score ?? 0)
+              : (stats?.average_score ?? 0).toFixed(2)}
+            %
           </div>
           <div className="stat-desc">
-            {stats?.average_score > 80 ? "Excellent" : 
-            stats?.average_score > 60 ? "Good" : 
-            stats?.average_score > 40 ? "Okay" : 
-            (stats?.attempts ?? 0) > 0 ? "Poor" : "-"}
+            {stats?.average_score > 80
+              ? "Excellent"
+              : stats?.average_score > 60
+              ? "Good"
+              : stats?.average_score > 40
+              ? "Okay"
+              : (stats?.attempts ?? 0) > 0
+              ? "Poor"
+              : "-"}
           </div>
         </div>
 

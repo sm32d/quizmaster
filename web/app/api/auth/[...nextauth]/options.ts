@@ -10,16 +10,19 @@ export const options = {
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     }),
   ],
   callbacks: {
-    async signIn({account, profile, user}) {
-      if (account.provider === "facebook" && (user.email === "" || user.email === null)) {
+    async signIn({ account, profile, user }) {
+      if (
+        account.provider === "facebook" &&
+        (user.email === "" || user.email === null)
+      ) {
         return false;
       }
       const backendUri = process.env.BACKEND_URI;
@@ -30,13 +33,13 @@ export const options = {
       jsonObject["name"] = user.name;
       jsonObject["provider"] = account.provider;
       jsonObject["providerAccountId"] = account.providerAccountId;
-      let isAllowedToSignIn : boolean = false;
+      let isAllowedToSignIn: boolean = false;
       try {
         const response = await fetch(`${backendUri}/api/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${backendApiKey}`
+            Authorization: `Bearer ${backendApiKey}`,
           },
           body: JSON.stringify(jsonObject),
         });
@@ -50,6 +53,10 @@ export const options = {
       } else {
         return false;
       }
+    },
+    async session({ session, user, token }) {      
+      session.user.id = token.sub;
+      return session;
     },
   },
 };
