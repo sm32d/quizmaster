@@ -5,12 +5,18 @@ import React from "react";
 import SignOut from "./signout";
 
 import { Alpha } from "tabler-icons-react";
+import { ExtendedSession } from "../types/user";
 
 const navbar = async () => {
-  const session = await getServerSession(options);
   const APP_NAME = process.env.APP_NAME;
+
+  const session: ExtendedSession = await getServerSession(options);
+  const classes = session.user.ab
+    ? "navbar min-h-[8svh] m-4 max-w-[92svw] shadow rounded-3xl"
+    : "navbar border-b border-dashed border-neutral dark:border-base-content min-h-[8svh]";
+
   return (
-    <div className="navbar border-b border-dashed border-neutral dark:border-base-content min-h-[8svh]">
+    <div className={classes}>
       <details className="dropdown">
         <summary tabIndex={0} className="btn btn-ghost btn-circle">
           <svg

@@ -1,6 +1,7 @@
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import { User } from "../../../types/user";
 
 export const options = {
   providers: [
@@ -54,7 +55,24 @@ export const options = {
         return false;
       }
     },
-    async session({ session, user, token }) {      
+    async session({ session, user, token }) {   
+      const backendUri = process.env.BACKEND_URI;
+      const backendApiKey = process.env.BACKEND_API_KEY;
+      try {
+        const response = await fetch(`${backendUri}/api/user`, {
+          cache: "force-cache",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${backendApiKey}`,
+          },
+          body: JSON.stringify({ email: session.user.email }),
+        });
+        const data: User = await response.json();
+        session.user.ab = data.ab_test_group;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      } 
       session.user.id = token.sub;
       return session;
     },

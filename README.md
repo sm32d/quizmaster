@@ -68,5 +68,6 @@ yarn start
 
 ### A/B Features
 
+- New Navbar
 - Quiz Details Page
 - Dashboard Table Quiz Toggle

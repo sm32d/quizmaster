@@ -8,7 +8,7 @@ import QuizStats from "../../../components/quizAnswers/QuizStats";
 import QuizAnswerCards from "../../../components/quizAnswers/QuizAnswerCards";
 import Tabbed from "./tabbed";
 import QuestionCards from "./QuestionCards";
-import { User } from "../../../types/user";
+import { ExtendedSession } from "../../../types/user";
 
 const backendUri = process.env.BACKEND_URI;
 const backendApiKey = process.env.BACKEND_API_KEY;
@@ -61,37 +61,16 @@ const fetchQuizAnswers = async (id: Quiz["id"], page: number) => {
   }
 };
 
-const fetchUserABType = async () => {
-  const backendUri = process.env.BACKEND_URI;
-  const backendApiKey = process.env.BACKEND_API_KEY;
-  const session = await getServerSession(options);
-  try {
-    const response = await fetch(`${backendUri}/api/user`, {
-      cache: "force-cache",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${backendApiKey}`,
-      },
-      body: JSON.stringify({ email: session.user.email }),
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data: User = await response.json();
-    return data.ab_test_group;
-  } catch (error) {
-    console.error("Error fetching data: ", error);
-  }
-};
-
 const QuizDetails = async ({ params }) => {
   const quizDetails: Quiz = await fetchQuizDetails(params.slug);
   const quizAnswers: { answers: QuizAnswer[] } = await fetchQuizAnswers(
     params.slug,
     1
   );
-  const ab = await fetchUserABType();
+
+  const session: ExtendedSession = await getServerSession(options);
+  const ab = session.user.ab;
+
   return (
     <div className="min-h-[92svh]">
       {quizDetails ? (

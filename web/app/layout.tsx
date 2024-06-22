@@ -20,8 +20,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <Nav />
-          <div className="bg-base-100">{children}</div>
+          <div className="flex justify-center">
+            <Nav />
+          </div>
+          <div className="bg-base-100 px-2">{children}</div>
           <Footer />
           <div className="fixed bottom-5 right-5">
             <BtnScrollToTop />
