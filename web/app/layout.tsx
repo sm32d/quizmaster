@@ -3,7 +3,7 @@ import "./globals.css";
 import Nav from "./components/navbar";
 import Footer from "./components/footer";
 import AuthProvider from "./context/AuthProvider";
-import BtnScrollToTop from "./components/buttons/btnScrollToTop";
+import BtnScrollToTop from "./components/buttons/BtnScrollToTop";
 
 const inter = Inter({ subsets: ["latin"] });
 
