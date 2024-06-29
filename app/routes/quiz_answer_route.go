@@ -33,6 +33,12 @@ func SetAnswerRoutes(app *fiber.App, client *mongo.Client) {
 		return controllers.CreateAnswerHandler(c, client, trackingID)
 	})
 
+	// complete an answer
+	app.Post("/api/answer/:answerId/complete", func(c *fiber.Ctx) error {
+		trackingID := c.Locals("trackingID").(string)
+		return controllers.CompleteAnswerHandler(c, client, trackingID)
+	})
+
 	// Retrive all answers for a quiz
 	app.Get("/api/quiz/:quizId/answers", func(c *fiber.Ctx) error {
 		trackingID := c.Locals("trackingID").(string)

@@ -3,6 +3,7 @@ package controllers
 import (
 	"quizmaster/app/models"
 	"quizmaster/app/services"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -113,6 +114,8 @@ func GetQuizById(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
 
+	email.Email = strings.ToLower(email.Email)
+
 	log.Info("Retrieving user:", email.Email, ", trackingID:", trackingID)
 	user, err := GetUserByEmailHandler(client, email.Email, trackingID)
 	if err != nil {
@@ -194,6 +197,8 @@ func GetStatsForQuiz(c *fiber.Ctx, client *mongo.Client, trackingID string) erro
 		log.Error("Failed to parse user from request body:", err, ", trackingID:", trackingID)
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
+
+	email.Email = strings.ToLower(email.Email)
 
 	log.Info("Retrieving user:", email.Email, ", trackingID:", trackingID)
 	user, err := GetUserByEmailHandler(client, email.Email, trackingID)

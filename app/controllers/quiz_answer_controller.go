@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"quizmaster/app/models"
 	"quizmaster/app/services"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -25,6 +26,8 @@ func CheckEligibilityHandler(c *fiber.Ctx, client *mongo.Client, trackingID stri
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
+
+	user.Email = strings.ToLower(user.Email)
 
 	quiz, err := services.GetQuizByIdForEU(client, quizId)
 	if err != nil {
@@ -70,12 +73,13 @@ func CheckEligibilityHandler(c *fiber.Ctx, client *mongo.Client, trackingID stri
 					})
 				}
 			}
+		} else {
+			// quiz is not timed, return existing answer
+			return c.Status(fiber.StatusOK).JSON(fiber.Map{
+				"eligible": true,
+				"answer":   answer,
+			})
 		}
-		// quiz is not timed, return existing answer
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"eligible": true,
-			"answer":   answer,
-		})
 	} else { // quiz was ended; check if quiz allows multiple attempts
 		if quiz.AllowMultipleAttempts {
 			return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -96,6 +100,8 @@ func InitAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) er
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
+
+	user.Email = strings.ToLower(user.Email)
 
 	quiz, err := services.GetQuizByIdForEU(client, quizId)
 	if err != nil {
@@ -240,9 +246,44 @@ func CreateAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) 
 	}
 
 	log.Info("CreateAnswerHandler : Answer created successfully", ", trackingID:", trackingID)
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"answer": answer,
-	})
+	return c.Status(fiber.StatusCreated).JSON(answer)
+}
+
+func CompleteAnswerHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
+	answerId := c.Params("answerId")
+	objID, err := primitive.ObjectIDFromHex(answerId)
+	if err != nil {
+		log.Error("CompleteAnswerHandler : Error parsing answer ID : ", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
+	}
+
+	log.Info("CompleteAnswerHandler : Fetching Answer by ID", ", trackingID:", trackingID)
+	answer, err := services.GetAnswerById(client, objID)
+	if err != nil {
+		log.Error("CreateAnswerHandler : Error retrieving answer : ", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Internal Server Error",
+		})
+	}
+
+	if answer == nil {
+		log.Error("CompleteAnswerHandler : Answer not found : ", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Answer not found",
+		})
+	}
+
+	answer.EndedAt = time.Now()
+	_, err = services.UpdateAnswer(client, answer)
+	if err != nil {
+		log.Error("CompleteAnswerHandler : Error updating answer : ", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Internal Server Error",
+		})
+	}
+
+	log.Info("CompleteAnswerHandler : Answer completed successfully", ", trackingID:", trackingID)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 // GetAnswersByQuiz retrieves all answers for a quiz.

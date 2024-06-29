@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"quizmaster/app/models"
 	"quizmaster/app/services"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -54,6 +55,8 @@ func CreateUserHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) er
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Bad request")
 	}
+
+	user.Email = strings.ToLower(user.Email)
 
 	randABTestGroup := rand.Float64()
 	log.Info("Random AB test group:", randABTestGroup, ", trackingID:", trackingID)
