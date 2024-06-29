@@ -11,7 +11,7 @@ const navbar = async () => {
   const APP_NAME = process.env.APP_NAME;
 
   const session: ExtendedSession = await getServerSession(options);
-  const classes = session.user.ab
+  const classes = session?.user.ab
     ? "navbar min-h-[8svh] m-4 max-w-[92svw] shadow rounded-3xl"
     : "navbar border-b border-dashed border-neutral dark:border-base-content min-h-[8svh]";
 
