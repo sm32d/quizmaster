@@ -10,7 +10,6 @@ const toggleQuiz = async (
 ) => {
   try {
     const response = await fetch(`${backendUri}/api/quiz/${quizId}/active`, {
-      cache: "no-store",
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${backendApiKey}`,

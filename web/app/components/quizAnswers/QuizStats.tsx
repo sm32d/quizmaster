@@ -17,12 +17,12 @@ const fetchStats = async (quizId: string) => {
         Authorization: `Bearer ${backendApiKey}`,
       },
       body: JSON.stringify(emailObject),
-      cache: "no-store",
+      cache: "no-cache",
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const data = await response.json();
+    const data: Stats = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching data: ", error);

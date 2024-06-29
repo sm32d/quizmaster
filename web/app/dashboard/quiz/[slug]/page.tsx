@@ -19,13 +19,13 @@ async function fetchQuizDetails(id: Quiz["id"]) {
   emailObject["email"] = session.user.email;
   try {
     const response = await fetch(`${backendUri}/api/quiz/${id}`, {
+      cache: "no-store",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${backendApiKey}`,
       },
       body: JSON.stringify(emailObject),
-      cache: "no-store",
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
