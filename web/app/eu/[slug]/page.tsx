@@ -1,4 +1,5 @@
 import DoQuiz from "./DoQuiz";
+import { Quiz } from "../../types/quiz";
 
 const page = async ({ params }) => {
   const backendUri = process.env.BACKEND_URI;
@@ -16,7 +17,7 @@ const page = async ({ params }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const data = await response.json();
+      const data: Quiz = await response.json();
       return data;
     } catch (error) {
       console.error("Error fetching data: ", error);
@@ -26,11 +27,24 @@ const page = async ({ params }) => {
 
   const quizDetails = await fetchQuizDetails(params.slug);
   return (
-    <DoQuiz
-      backendUri={backendUri}
-      backendApiKey={backendApiKey}
-      quizDetails={quizDetails}
-    />
+    <div>
+      <header>
+        <div className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 py-6 sm:px-6 lg:px-8">
+          <div className="flex">
+            <h1 className="text-xl font-medium tracking-tigh pl-2">{quizDetails?.title}</h1>
+          </div>
+        </div>
+      </header>
+      <main className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 pb-6 sm:px-6 lg:px-8">
+        <div className="overflow-x-hidden px-2 flex justify-center">
+          <DoQuiz
+            backendUri={backendUri}
+            backendApiKey={backendApiKey}
+            quizDetails={quizDetails}
+          />
+        </div>
+      </main>
+    </div>
   );
 };
 

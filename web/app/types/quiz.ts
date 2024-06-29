@@ -23,6 +23,11 @@ export type Question = {
     section: string;
 };
 
+export type QuizEligibility = {
+    eligible: boolean;
+    answer?: QuizAnswer;
+}
+
 export type QuizAnswer = {
     id?: string;
     quiz_id: string;
