@@ -261,6 +261,14 @@ func GetQuizByIdForEU(c *fiber.Ctx, client *mongo.Client, trackingID string) err
 	}
 
 	log.Info("Quiz retrieved successfully", ", trackingID:", trackingID)
+
+	if !quiz.Active {
+		log.Info("Quiz is not active:", quizID, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusLocked).JSON(fiber.Map{
+			"error": "Quiz is not active",
+		})
+	}
+
 	return c.JSON(quiz)
 }
 
