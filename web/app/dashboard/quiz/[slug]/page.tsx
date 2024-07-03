@@ -9,6 +9,7 @@ import QuizAnswerCards from "../../../components/quizAnswers/QuizAnswerCards";
 import Tabbed from "./tabbed";
 import QuestionCards from "./QuestionCards";
 import { ExtendedSession } from "../../../types/user";
+import DownloadQuizAnswersBtn from "../../../components/buttons/DownloadQuizAnswersBtn";
 
 const backendUri = process.env.BACKEND_URI;
 const backendApiKey = process.env.BACKEND_API_KEY;
@@ -77,11 +78,16 @@ const QuizDetails = async ({ params }) => {
         <div>
           <header>
             <div className="mx-auto sm:max-w-[90svw] md:max-w-[80svw] px-4 py-6 sm:px-6 lg:px-8">
-              <div className="flex items-center">
-                <Link href="/dashboard">
-                  <ArrowNarrowLeft size={20} />
-                </Link>
-                <h1 className="text-xl font-medium tracking-tigh pl-2">{`${quizDetails?.title}`}</h1>
+              <div className="flex justify-between">
+                <div className="flex items-center">
+                  <Link href="/dashboard">
+                    <ArrowNarrowLeft size={20} />
+                  </Link>
+                  <h1 className="text-xl font-medium tracking-tigh pl-2">{`${quizDetails?.title}`}</h1>
+                </div>
+                {quizAnswers.answers.length > 0 && (
+                  <DownloadQuizAnswersBtn quizId={quizDetails?.id} backendApiKey={backendApiKey} backendUri={backendUri} />
+                )}
               </div>
               <span className="badge my-2 mx-6">{quizDetails?.difficulty}</span>
             </div>

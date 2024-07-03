@@ -64,4 +64,10 @@ func SetAnswerRoutes(app *fiber.App, client *mongo.Client) {
 		trackingID := c.Locals("trackingID").(string)
 		return controllers.GetAnswersByQuestion(c, client, trackingID)
 	})
+
+	// Download all answers in a csv
+	app.Get("/api/quiz/:quizId/answers/download", func(c *fiber.Ctx) error {
+		trackingID := c.Locals("trackingID").(string)
+		return controllers.DownloadAnswersHandler(c, client, trackingID)
+	})
 }

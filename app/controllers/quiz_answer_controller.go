@@ -1,9 +1,13 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/csv"
+	"fmt"
 	"math/rand"
 	"quizmaster/app/models"
 	"quizmaster/app/services"
+	"sort"
 	"strings"
 	"time"
 
@@ -376,4 +380,121 @@ func GetAnswersByQuestion(c *fiber.Ctx, client *mongo.Client, trackingID string)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"answers": answers,
 	})
+}
+
+// DownloadAnswersHandler handles downloading answers for a quiz.
+//
+// Parameters:
+// - c: Context object for Fiber.
+// - client: Mongo client for database operations.
+// - trackingID: Identifier for tracking purposes.
+// Returns an error if any.
+func DownloadAnswersHandler(c *fiber.Ctx, client *mongo.Client, trackingID string) error {
+	quizId := c.Params("quizId")
+
+	quiz, err := services.GetQuizByIdForEU(client, quizId)
+	if err != nil {
+		log.Info("DownloadAnswersHandler: Failed to retrieve quiz:", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).SendString("Server error")
+	}
+
+	if quiz == nil {
+		log.Info("DownloadAnswersHandler: Quiz not found:", quizId, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusNotFound).SendString("Quiz not found")
+	}
+
+	answers, err := services.GetAnswersByQuiz(client, quizId)
+	if err != nil {
+		log.Info("Failed to get answers for quiz: ", err, ", trackingID:", trackingID)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Internal Server Error",
+		})
+	}
+
+	// sort answers by startedAt desc
+	sort.Slice(answers, func(i, j int) bool {
+		return answers[i].StartedAt.After(answers[j].StartedAt)
+	})
+
+	// Create a map to store question ID to text mapping
+	questionMap := make(map[primitive.ObjectID]string)
+	for _, question := range quiz.Questions {
+		questionMap[question.ID] = question.Text
+	}
+
+	// Create a buffer to write CSV data into
+	buf := new(bytes.Buffer)
+
+	// Create a new CSV writer using the buffer
+	w := csv.NewWriter(buf)
+	defer w.Flush()
+
+	// Write headers
+	headers := []string{"UserID", "StartedAt", "EndedAt", "Score"}
+	if len(answers) > 0 {
+		for _, question := range quiz.Questions {
+			headers = append(headers, questionMap[question.ID])
+		}
+	}
+	if err := w.Write(headers); err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString("Could not write headers")
+	}
+
+	// Write data rows
+	for _, answer := range answers {
+		var row []string
+		row = append(row, answer.UserID)
+		row = append(row, answer.StartedAt.Format(time.RFC3339))
+		if !answer.EndedAt.IsZero() {
+			row = append(row, answer.EndedAt.Format(time.RFC3339))
+		} else {
+			row = append(row, "")
+		}
+		row = append(row, calculateScorePerPerson(*quiz, answer))
+		for _, question := range quiz.Questions {
+			for _, qa := range answer.Answers {
+				if question.ID == qa.QuestionID {
+					row = append(row, qa.Answer)
+					break
+				}
+			}
+		}
+		if err := w.Write(row); err != nil {
+			return c.Status(fiber.StatusInternalServerError).SendString("Could not write data")
+		}
+	}
+
+	// Ensure all data is written to the buffer
+	w.Flush()
+	if err := w.Error(); err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString("Error flushing data")
+	}
+
+	// Set headers to indicate file download
+	c.Set("Content-Disposition", "attachment; filename=quiz_results.csv")
+	c.Set("Content-Type", "text/csv")
+
+	// Send the CSV data as the response
+	return c.Send(buf.Bytes())
+}
+
+func calculateScorePerPerson(quiz models.Quiz, answer models.Answer) string {
+	// Create a map for the correct answers
+	correctAnswers := make(map[primitive.ObjectID]string)
+	for _, question := range quiz.Questions {
+		correctAnswers[question.ID] = question.Correct
+	}
+
+	// Calculate the score
+	score := 0
+	for _, qa := range answer.Answers {
+		if correctAnswer, ok := correctAnswers[qa.QuestionID]; ok {
+			if qa.Answer == correctAnswer {
+				score++
+			}
+		}
+	}
+
+	// Return the score as a string
+	return fmt.Sprintf("%d", score)
 }
