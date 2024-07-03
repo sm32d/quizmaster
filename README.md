@@ -1,6 +1,9 @@
 # QuizMaster
 
-<img width="1436" alt="image" src="https://github.com/sm32d/quizmaster/assets/64636803/083ebf5e-6bad-447e-b786-45cfbc62f480">
+<img width="1436" alt="image" src="https://github.com/sm32d/quizmaster/assets/64636803/439108b6-3ce1-4078-afce-a911b514ded2">
+<img width="1436" alt="image" src="https://github.com/sm32d/quizmaster/assets/64636803/b3dd613f-c1df-4cdd-a613-a9a42dde21aa">
+
+> Detailed docs [here](https://github.com/sm32d/quizmaster/wiki)
 
 ## Requirements
 
