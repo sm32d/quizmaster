@@ -85,7 +85,7 @@ const QuizDetails = async ({ params }) => {
                   </Link>
                   <h1 className="text-xl font-medium tracking-tigh pl-2">{`${quizDetails?.title}`}</h1>
                 </div>
-                {quizAnswers.answers.length > 0 && (
+                {quizAnswers?.answers?.length > 0 && (
                   <DownloadQuizAnswersBtn quizId={quizDetails?.id} backendApiKey={backendApiKey} backendUri={backendUri} />
                 )}
               </div>
